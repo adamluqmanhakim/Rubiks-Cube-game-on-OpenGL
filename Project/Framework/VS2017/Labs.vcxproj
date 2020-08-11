@@ -117,25 +117,26 @@
     <None Include="NotAffectedByLighting.frag" />
     <None Include="NotAffectedByLighting.vert" />
     <None Include="shadowVertex.glsl" />
-	
   </ItemGroup>
   <ItemGroup>
-	<Image Include="..\..\..\..\..\..\container.jpg" />
+    <Image Include="..\..\..\..\..\..\container.jpg" />
     <Image Include="..\Assets\Textures\BillboardTest.bmp" />
     <Image Include="..\Assets\Textures\Particle.png" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Cube.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Rubiks_Cube.cpp" />
     <ClCompile Include="Sphere.cpp" />
-	<ClCompile Include="stb_image.cpp" />
+    <ClCompile Include="stb_image.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Cube.h" />
+    <ClInclude Include="Rubiks_Cube.h" />
     <ClInclude Include="shaderloader.h" />
     <ClInclude Include="shader_compile.h" />
     <ClInclude Include="Sphere.h" />
-	<ClInclude Include="stb_image.h" />
+    <ClInclude Include="stb_image.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
