@@ -20,6 +20,7 @@
 #include <math.h>
 #include "Sphere.h"
 #include "shaderloader.h"
+#include "Rubiks_Cube.h"
 
 using namespace glm;
 using namespace std;
@@ -52,9 +53,6 @@ vec3 defaultSize = vec3(1.0f, 6.5f, 1.0f);
 //vec3 lightPos = vec3(0.0f, 30.0f, 0.0f);
 vec3 lightPos = vec3(0.0f, 1.0f, 30.0f);
 vec3 lightFocus(0, 0, -1); // the point in 3D space the light "looks" at
-
-array<array<array<Cube, 3>, 3>, 3> cubeArray;
-
 
 int main()
 {
@@ -265,10 +263,10 @@ int main()
     GLuint blueTextureID = loadTexture("../Assets/Textures/blue.bmp");
     GLuint orangeTextureID = loadTexture("../Assets/Textures/orange.bmp");
     GLuint skyboxTextureID = loadTexture("../Assets/Textures/skybox.jpg");
-
-
-
 #endif
+
+    //setting up texture packs
+    vector<GLuint> texturePackNormal = { redTextureID, yellowTextureID, greenTextureID, whiteTextureID, blueTextureID, orangeTextureID };
    
     float lightAngleOuter = radians(30.0f);
     float lightAngleInner = radians(20.0f);
@@ -308,17 +306,11 @@ int main()
 
     int skyboxChoose = 0;
 
-    //storing cubes into the cube array
-    for (int x = 0; x < 3; x++) {
-        for (int y = 0; y < 3; y++) {
-            for (int z = 0; z < 3; z++) {
-                Cube newCube = Cube(vec3(1.0f), ShadowShader);
-                newCube.setDefaultPosition(vec3(x - 1, y - 1, z - 1));
-                cubeArray[x][y][z] = newCube;
-                newCube.drawModel();
-            }
-        }
-    }
+    ShadowShader.use();
+    //creating all cube objects
+    Rubiks_Cube normalCube = Rubiks_Cube(vec3(0.0f), texturePackNormal);
+    normalCube.generateCube(ShadowShader);
+    
 
     // Entering Game Loop
     while (!glfwWindowShouldClose(window))
@@ -389,62 +381,16 @@ int main()
         glBindVertexArray(cubeVAO);
 
         ShadowShader.use();
-        for (int x = 0; x < 3; x++) {
-            for (int y = 0; y < 3; y++) {
-                for (int z = 0; z < 3; z++) {
-                    cubeArray[x][y][z].setCurrentShader(ShadowShader);
 
-                }
-            }
-        }
+        normalCube.setShader(ShadowShader);
+        normalCube.drawModel();
 
-        //draw bottom face 
-        glBindTexture(GL_TEXTURE_2D, redTextureID);
-        for (int x = 0; x < 3; x++) {
-            for (int z = 0; z < 3; z++) {
-                cubeArray[x][0][z].drawBotFace();
-            }
-        }
-
-        //draw top face
-        glBindTexture(GL_TEXTURE_2D, yellowTextureID);
-        for (int x = 0; x < 3; x++) {
-            for (int z = 0; z < 3; z++) {
-                cubeArray[x][2][z].drawTopFace();
-            }
-        }
-
-        //draw left face
-        glBindTexture(GL_TEXTURE_2D, orangeTextureID);
-        for (int y = 0; y < 3; y++) {
-            for (int z = 0; z < 3; z++) {
-                cubeArray[0][y][z].drawLeftFace();
-            }
-        }
-
-        //draw right face
-        glBindTexture(GL_TEXTURE_2D, greenTextureID);
-        for (int y = 0; y < 3; y++) {
-            for (int z = 0; z < 3; z++) {
-                cubeArray[2][y][z].drawRightFace();
-            }
-        }
-
-        //draw Front face
-        glBindTexture(GL_TEXTURE_2D, blueTextureID);
-        for (int x = 0; x < 3; x++) {
-            for (int y = 0; y < 3; y++) {
-                cubeArray[x][y][2].drawFrontFace();
-            }
-        }
-
-        //draw back face
-        glBindTexture(GL_TEXTURE_2D, whiteTextureID);
-        for (int x = 0; x < 3; x++) {
-            for (int y = 0; y < 3; y++) {
-                cubeArray[x][y][0].drawBackFace();
-            }
-        }
+         //drawing skybox
+        glBindVertexArray(cubeVAO);
+        glBindTexture(GL_TEXTURE_2D, skyboxTextureID);
+        mat4 skybox = translate(mat4(1.0f), cameraPosition) * scale(mat4(1.0f), vec3(-500.0f));
+        ShadowShader.setMat4("worldMatrix", skybox);
+        glDrawArrays(GL_TRIANGLES, 0, 36); // 36 vertices, starting at index 0
         
         glBindTexture(GL_TEXTURE_2D, 0);
 
@@ -474,62 +420,14 @@ int main()
         glBindVertexArray(cubeVAO);
 
         AffectedByLightingShader.use();
+        normalCube.setShader(AffectedByLightingShader);
+        normalCube.drawModel();
 
-        for (int x = 0; x < 3; x++) {
-            for (int y = 0; y < 3; y++) {
-                for (int z = 0; z < 3; z++) {
-                    cubeArray[x][y][z].setCurrentShader(AffectedByLightingShader);
-                }
-            }
-        }
-
-        //draw bottom face 
-        glBindTexture(GL_TEXTURE_2D, redTextureID);
-        for (int x = 0; x < 3; x++) {
-            for (int z = 0; z < 3; z++) {
-                cubeArray[x][0][z].drawBotFace();
-            }
-        }
-
-        //draw top face
-        glBindTexture(GL_TEXTURE_2D, yellowTextureID);
-        for (int x = 0; x < 3; x++) {
-            for (int z = 0; z < 3; z++) {
-                cubeArray[x][2][z].drawTopFace();
-            }
-        }
-
-        //draw left face
-        glBindTexture(GL_TEXTURE_2D, orangeTextureID);
-        for (int y = 0; y < 3; y++) {
-            for (int z = 0; z < 3; z++) {
-                cubeArray[0][y][z].drawLeftFace();
-            }
-        }
-
-        //draw right face
-        glBindTexture(GL_TEXTURE_2D, greenTextureID);
-        for (int y = 0; y < 3; y++) {
-            for (int z = 0; z < 3; z++) {
-                cubeArray[2][y][z].drawRightFace();
-            }
-        }
-
-        //draw Front face
-        glBindTexture(GL_TEXTURE_2D, blueTextureID);
-        for (int x = 0; x < 3; x++) {
-            for (int y = 0; y < 3; y++) {
-                cubeArray[x][y][2].drawFrontFace();
-            }
-        }
-
-        //draw back face
-        glBindTexture(GL_TEXTURE_2D, whiteTextureID);
-        for (int x = 0; x < 3; x++) {
-            for (int y = 0; y < 3; y++) {
-                cubeArray[x][y][0].drawBackFace();
-            }
-        }
+        //drawing skybox
+        glBindVertexArray(cubeVAO);
+        glBindTexture(GL_TEXTURE_2D, skyboxTextureID);
+        AffectedByLightingShader.setMat4("worldMatrix", skybox);
+        glDrawArrays(GL_TRIANGLES, 0, 36); // 36 vertices, starting at index 0
 
 
         //draw all bottom face
