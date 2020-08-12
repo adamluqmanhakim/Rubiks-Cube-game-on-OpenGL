@@ -21,9 +21,13 @@
 #include "Sphere.h"
 #include "shaderloader.h"
 #include "Rubiks_Cube.h"
+#include <irrKlang.h>
+#pragma comment(lib, "irrKlang.lib") // link with irrKlang.dll
 
 using namespace glm;
 using namespace std;
+using namespace irrklang;
+
 
 
 bool initContext();
@@ -57,6 +61,12 @@ vec3 lightFocus(0, 0, -1); // the point in 3D space the light "looks" at
 int main()
 {
     if (!initContext()) return -1;
+
+    // start the sound engine with default parameters
+    ISoundEngine* engine = createIrrKlangDevice();
+    
+    // play some sound stream, looped
+    engine->play2D("gameSound.mp3", true);
 
     // Black background
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
@@ -756,6 +766,7 @@ vec3 crossProduct(vec3 point1, vec3 point2, vec3 point3) {
     vec3 vector2 = point3 - point1;
     return cross(vector1, vector2);
 }
+
 
 vector<vec3> generateSphere(float radius, int polyCount) {
     float sectorCount = polyCount;
