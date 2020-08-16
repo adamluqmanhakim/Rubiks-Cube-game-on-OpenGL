@@ -433,8 +433,9 @@ int main()
 
     string timer = "";
     string time = "";
-    bool TimeUpdate = 1;
+    int TimeUpdate = 0;
     double seconds = 0.0;
+    double newseconds = 0.0;
 
         ShadowShader.use();
     //creating all cube objects
@@ -483,12 +484,19 @@ int main()
 
             //Rendering Text
 
-            if (TimeUpdate == true) {
+            if (TimeUpdate == 0) 
+            {
                 seconds = glfwGetTime();
                 timer = to_string(120.0 - seconds);
             }
-            else {
+            else if (TimeUpdate == 1)
+            {
                 timer = to_string(120.0 - seconds);
+            }
+            else if (TimeUpdate == 2) 
+            {
+                newseconds = glfwGetTime();
+                timer = to_string(120.0 - newseconds);
             }
 
         //modules for controlling model and world behaviour =================================================================================================================
@@ -589,6 +597,16 @@ int main()
             {
                 TimeUpdate = 0;
             }
+
+            if(glfwGetKey(window, GLFW_KEY_9) == GLFW_PRESS)
+            {
+                TimeUpdate = 1;
+            }
+
+            /*if (glfwGetKey(window, GLFW_KEY_8) == GLFW_PRESS)
+            {
+                TimeUpdate = 2;
+            }*/
 
         //drawing everything ==================================================================================================
 
