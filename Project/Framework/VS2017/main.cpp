@@ -1,11 +1,13 @@
 
 #include <iostream>
 #include <list>
+#include <map>
+#include <fstream>
 
 #define GLEW_STATIC 1
 #include <GL/glew.h>
-
 #include <GLFW/glfw3.h>
+
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -24,20 +26,25 @@
 #include <irrKlang.h>
 #pragma comment(lib, "irrKlang.lib") // link with irrKlang.dll
 
+#include <ft2build.h>
+#include FT_FREETYPE_H  
+
 using namespace glm;
 using namespace std;
 using namespace irrklang;
 
 
 
-bool initContext();
-float RNGpos();
-GLuint loadTexture(const char* filename);
+
 
 bool initContext();
+GLuint loadTexture(const char* filename);
+
 float RNGpos();
 vec3 crossProduct(vec3, vec3, vec3);
 vector<vec3> generateSphere(float, int);
+
+void RenderText(Shader& shader, string text, float x, float y, float scale, vec3 color);
 
 GLFWwindow* window = NULL;
 
@@ -58,9 +65,20 @@ vec3 defaultSize = vec3(1.0f, 6.5f, 1.0f);
 vec3 lightPos = vec3(0.0f, 1.0f, 30.0f);
 vec3 lightFocus(0, 0, -1); // the point in 3D space the light "looks" at
 
+    struct Character {
+    unsigned int TextureID; //Id handle of the glyph texture
+    ivec2 Size;             //Size of glyph
+    ivec2 Bearing;          //Offset from baseline to left/top of glyph
+    unsigned int Advance;   //Horizontal offset to advance to next glyph
+};
+
+map<GLchar, Character> Characters;
+GLuint charVAO, charVBO;
+
 vec3 selectCord = vec3(0.0f); //coordinate of the red "select" cube 
 
 vec3 normalCubePosition = vec3(0.0f); //position of the normal rubik's cube 
+
 
 
 int main()
@@ -69,7 +87,7 @@ int main()
 
     // start the sound engine with default parameters
     ISoundEngine* engine = createIrrKlangDevice();
-    
+
     // play some sound stream, looped
     engine->play2D("gameSound.mp3", true);
 
@@ -80,6 +98,7 @@ int main()
     Shader AffectedByLightingShader("AffectedByLighting.vert", "AffectedByLighting.frag");
     Shader NotAffectedByLightingShader("NotAffectedByLighting.vert", "NotAffectedByLighting.frag");
     Shader ShadowShader("shadowVertex.glsl", "shadowFragment.glsl");
+    Shader TextShader("text.vert", "text.frag");
 
     //Initiating camera
     vec3 cameraPosition(0.6f, 1.0f, 10.0f);
@@ -92,6 +111,93 @@ int main()
 
     // Set projection matrix for shader, this won't change
 
+
+    //Freetype
+    FT_Library ft;
+    //All functions return a value different than 0 whenever an error occured
+    if (FT_Init_FreeType(&ft))
+    {
+        cout << "ERROR::FREETYPE: Could not init FreeType Library" << endl;
+        return -1;
+    }
+
+    // find path to font
+    string font_name = "C:/Windows/Fonts/ariblk.ttf";
+    if (font_name.empty())
+    {
+        std::cout << "ERROR::FREETYPE: Failed to load font_name" << std::endl;
+        return -1;
+    }
+
+
+    // load font as face
+    FT_Face face;
+    if (FT_New_Face(ft, font_name.c_str(), 0, &face)) {
+        cout << "ERROR::FREETYPE: Failed to load font" << endl;
+        return -1;
+    }
+    else {
+        // set size to load glyphs as
+        FT_Set_Pixel_Sizes(face, 0, 48);
+
+        // disable byte-alignment restriction
+        glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+
+        // load first 128 characters of ASCII set
+        for (unsigned char c = 0; c < 128; c++)
+        {
+            // Load character glyph 
+            if (FT_Load_Char(face, c, FT_LOAD_RENDER))
+            {
+                cout << "ERROR::FREETYTPE: Failed to load Glyph" << endl;
+                continue;
+            }
+            // generate texture
+            unsigned int texture;
+            glGenTextures(1, &texture);
+            glBindTexture(GL_TEXTURE_2D, texture);
+            glTexImage2D(
+                GL_TEXTURE_2D,
+                0,
+                GL_RED,
+                face->glyph->bitmap.width,
+                face->glyph->bitmap.rows,
+                0,
+                GL_RED,
+                GL_UNSIGNED_BYTE,
+                face->glyph->bitmap.buffer
+            );
+            // set texture options
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+            // now store character for later use
+            Character character = {
+                texture,
+                ivec2(face->glyph->bitmap.width, face->glyph->bitmap.rows),
+                ivec2(face->glyph->bitmap_left, face->glyph->bitmap_top),
+                face->glyph->advance.x
+            };
+            Characters.insert(pair<char, Character>(c, character));
+        }
+        glBindTexture(GL_TEXTURE_2D, 0);
+    }
+    // destroy FreeType once we're finished
+    FT_Done_Face(face);
+    FT_Done_FreeType(ft);
+
+    //configure VAO/VBO for texture quads
+    glGenVertexArrays(1, &charVAO);
+    glGenBuffers(1, &charVBO);
+    glBindVertexArray(charVAO);
+    glBindBuffer(GL_ARRAY_BUFFER, charVBO);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 6 * 4, NULL, GL_DYNAMIC_DRAW);
+    glEnableVertexAttribArray(0);
+    glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 4 * sizeof(float), 0);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glBindVertexArray(0);
+
     // Set initial view matrix
     mat4 viewMatrix = lookAt(cameraPosition, cameraPosition + cameraLookAt, cameraUp);
 
@@ -100,7 +206,7 @@ int main()
 
     NotAffectedByLightingShader.use();
     NotAffectedByLightingShader.setMat4("viewMatrix", viewMatrix);
- 
+
     struct Vertex
     {
         Vertex(vec3 _position, vec3 _color, vec3 _normal, vec2 _uv)
@@ -146,53 +252,53 @@ int main()
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, depth_map_fbo, 0);
     glDrawBuffer(GL_NONE); // Disable rendering colors, only write depth values
 
-    const Vertex vertexArray[] = {  
+    const Vertex vertexArray[] = {
         // position,                            color                        normal                                                                                                       uv
         Vertex(vec3(-0.5f,-0.5f,-0.5f), vec3(0.6f, 0.6f, 0.6f), crossProduct(vec3(-0.5f,-0.5f,-0.5f), vec3(-0.5f,-0.5f, 0.5f), vec3(-0.5f, 0.5f, 0.5f)),  vec2(0.0f, 0.0f)),
         Vertex(vec3(-0.5f,-0.5f, 0.5f), vec3(0.3f, 0.3f, 0.3f), crossProduct(vec3(-0.5f,-0.5f,-0.5f), vec3(-0.5f,-0.5f, 0.5f), vec3(-0.5f, 0.5f, 0.5f)),  vec2(0.0f, 1.0f)),
         Vertex(vec3(-0.5f, 0.5f, 0.5f), vec3(0.1f, 0.1f, 0.1f), crossProduct(vec3(-0.5f,-0.5f,-0.5f), vec3(-0.5f,-0.5f, 0.5f), vec3(-0.5f, 0.5f, 0.5f)),  vec2(1.0f, 1.0f)),
-        
+
         Vertex(vec3(-0.5f,-0.5f,-0.5f), vec3(0.6f, 0.6f, 0.6f), crossProduct(vec3(-0.5f,-0.5f,-0.5f), vec3(-0.5f, 0.5f, 0.5f), vec3(-0.5f, 0.5f,-0.5f)),  vec2(0.0f, 0.0f)),
         Vertex(vec3(-0.5f, 0.5f, 0.5f), vec3(0.3f, 0.3f, 0.3f), crossProduct(vec3(-0.5f,-0.5f,-0.5f), vec3(-0.5f, 0.5f, 0.5f), vec3(-0.5f, 0.5f,-0.5f)),  vec2(1.0f, 1.0f)),
         Vertex(vec3(-0.5f, 0.5f,-0.5f), vec3(0.1f, 0.1f, 0.1f), crossProduct(vec3(-0.5f,-0.5f,-0.5f), vec3(-0.5f, 0.5f, 0.5f), vec3(-0.5f, 0.5f,-0.5f)),  vec2(1.0f, 0.0f)),
 
-        Vertex(vec3( 0.5f, 0.5f,-0.5f), vec3(0.6f, 0.6f, 0.6f), crossProduct(vec3(0.5f, 0.5f,-0.5f), vec3(-0.5f,-0.5f,-0.5f), vec3(-0.5f, 0.5f,-0.5f)),  vec2(1.0f, 1.0f)),
+        Vertex(vec3(0.5f, 0.5f,-0.5f), vec3(0.6f, 0.6f, 0.6f), crossProduct(vec3(0.5f, 0.5f,-0.5f), vec3(-0.5f,-0.5f,-0.5f), vec3(-0.5f, 0.5f,-0.5f)),  vec2(1.0f, 1.0f)),
         Vertex(vec3(-0.5f,-0.5f,-0.5f), vec3(0.3f, 0.3f, 0.3f), crossProduct(vec3(0.5f, 0.5f,-0.5f), vec3(-0.5f,-0.5f,-0.5f), vec3(-0.5f, 0.5f,-0.5f)),  vec2(0.0f, 0.0f)),
         Vertex(vec3(-0.5f, 0.5f,-0.5f), vec3(0.1f, 0.1f, 0.1f), crossProduct(vec3(0.5f, 0.5f,-0.5f), vec3(-0.5f,-0.5f,-0.5f), vec3(-0.5f, 0.5f,-0.5f)),  vec2(0.0f, 1.0f)),
-        
-        Vertex(vec3( 0.5f, 0.5f,-0.5f), vec3(0.6f, 0.6f, 0.6f), crossProduct(vec3(0.5f, 0.5f,-0.5f), vec3(0.5f,-0.5f,-0.5f), vec3(-0.5f,-0.5f,-0.5f)),  vec2(1.0f, 1.0f)),
-        Vertex(vec3( 0.5f,-0.5f,-0.5f), vec3(0.3f, 0.3f, 0.3f), crossProduct(vec3(0.5f, 0.5f,-0.5f), vec3(0.5f,-0.5f,-0.5f), vec3(-0.5f,-0.5f,-0.5f)),  vec2(1.0f, 0.0f)),
+
+        Vertex(vec3(0.5f, 0.5f,-0.5f), vec3(0.6f, 0.6f, 0.6f), crossProduct(vec3(0.5f, 0.5f,-0.5f), vec3(0.5f,-0.5f,-0.5f), vec3(-0.5f,-0.5f,-0.5f)),  vec2(1.0f, 1.0f)),
+        Vertex(vec3(0.5f,-0.5f,-0.5f), vec3(0.3f, 0.3f, 0.3f), crossProduct(vec3(0.5f, 0.5f,-0.5f), vec3(0.5f,-0.5f,-0.5f), vec3(-0.5f,-0.5f,-0.5f)),  vec2(1.0f, 0.0f)),
         Vertex(vec3(-0.5f,-0.5f,-0.5f), vec3(0.1f, 0.1f, 0.1f), crossProduct(vec3(0.5f, 0.5f,-0.5f), vec3(0.5f,-0.5f,-0.5f), vec3(-0.5f,-0.5f,-0.5f)),  vec2(0.0f, 0.0f)),
 
-        Vertex(vec3( 0.5f,-0.5f, 0.5f), vec3(0.6f, 0.6f, 0.6f), crossProduct(vec3(0.5f,-0.5f, 0.5f), vec3(-0.5f,-0.5f,-0.5f), vec3(0.5f,-0.5f,-0.5f)), vec2(1.0f, 1.0f)),
+        Vertex(vec3(0.5f,-0.5f, 0.5f), vec3(0.6f, 0.6f, 0.6f), crossProduct(vec3(0.5f,-0.5f, 0.5f), vec3(-0.5f,-0.5f,-0.5f), vec3(0.5f,-0.5f,-0.5f)), vec2(1.0f, 1.0f)),
         Vertex(vec3(-0.5f,-0.5f,-0.5f), vec3(0.3f, 0.3f, 0.3f), crossProduct(vec3(0.5f,-0.5f, 0.5f), vec3(-0.5f,-0.5f,-0.5f), vec3(0.5f,-0.5f,-0.5f)), vec2(0.0f, 0.0f)),
-        Vertex(vec3( 0.5f,-0.5f,-0.5f), vec3(0.1f, 0.1f, 0.1f), crossProduct(vec3(0.5f,-0.5f, 0.5f), vec3(-0.5f,-0.5f,-0.5f), vec3(0.5f,-0.5f,-0.5f)), vec2(1.0f, 0.0f)),
-       
-        Vertex(vec3( 0.5f,-0.5f, 0.5f), vec3(0.6f, 0.6f, 0.6f), crossProduct(vec3(0.5f,-0.5f, 0.5f), vec3(-0.5f,-0.5f, 0.5f), vec3(-0.5f,-0.5f,-0.5f)), vec2(1.0f, 1.0f)),
+        Vertex(vec3(0.5f,-0.5f,-0.5f), vec3(0.1f, 0.1f, 0.1f), crossProduct(vec3(0.5f,-0.5f, 0.5f), vec3(-0.5f,-0.5f,-0.5f), vec3(0.5f,-0.5f,-0.5f)), vec2(1.0f, 0.0f)),
+
+        Vertex(vec3(0.5f,-0.5f, 0.5f), vec3(0.6f, 0.6f, 0.6f), crossProduct(vec3(0.5f,-0.5f, 0.5f), vec3(-0.5f,-0.5f, 0.5f), vec3(-0.5f,-0.5f,-0.5f)), vec2(1.0f, 1.0f)),
         Vertex(vec3(-0.5f,-0.5f, 0.5f), vec3(0.3f, 0.3f, 0.3f), crossProduct(vec3(0.5f,-0.5f, 0.5f), vec3(-0.5f,-0.5f, 0.5f), vec3(-0.5f,-0.5f,-0.5f)), vec2(0.0f, 1.0f)),
         Vertex(vec3(-0.5f,-0.5f,-0.5f), vec3(0.1f, 0.1f, 0.1f), crossProduct(vec3(0.5f,-0.5f, 0.5f), vec3(-0.5f,-0.5f, 0.5f), vec3(-0.5f,-0.5f,-0.5f)), vec2(0.0f, 0.0f)),
 
         Vertex(vec3(-0.5f, 0.5f, 0.5f), vec3(0.6f, 0.6f, 0.6f), crossProduct(vec3(-0.5f, 0.5f, 0.5f), vec3(-0.5f,-0.5f, 0.5f), vec3(0.5f,-0.5f, 0.5f)),  vec2(0.0f, 1.0f)),
         Vertex(vec3(-0.5f,-0.5f, 0.5f), vec3(0.3f, 0.3f, 0.3f), crossProduct(vec3(-0.5f, 0.5f, 0.5f), vec3(-0.5f,-0.5f, 0.5f), vec3(0.5f,-0.5f, 0.5f)),  vec2(0.0f, 0.0f)),
-        Vertex(vec3( 0.5f,-0.5f, 0.5f), vec3(0.1f, 0.1f, 0.1f), crossProduct(vec3(-0.5f, 0.5f, 0.5f), vec3(-0.5f,-0.5f, 0.5f), vec3(0.5f,-0.5f, 0.5f)),  vec2(1.0f, 0.0f)),
-        
-        Vertex(vec3( 0.5f, 0.5f, 0.5f), vec3(0.6f, 0.6f, 0.6f), crossProduct(vec3(0.5f, 0.5f, 0.5f), vec3(-0.5f, 0.5f, 0.5f), vec3(0.5f,-0.5f, 0.5f)),  vec2(1.0f, 1.0f)),
+        Vertex(vec3(0.5f,-0.5f, 0.5f), vec3(0.1f, 0.1f, 0.1f), crossProduct(vec3(-0.5f, 0.5f, 0.5f), vec3(-0.5f,-0.5f, 0.5f), vec3(0.5f,-0.5f, 0.5f)),  vec2(1.0f, 0.0f)),
+
+        Vertex(vec3(0.5f, 0.5f, 0.5f), vec3(0.6f, 0.6f, 0.6f), crossProduct(vec3(0.5f, 0.5f, 0.5f), vec3(-0.5f, 0.5f, 0.5f), vec3(0.5f,-0.5f, 0.5f)),  vec2(1.0f, 1.0f)),
         Vertex(vec3(-0.5f, 0.5f, 0.5f), vec3(0.3f, 0.3f, 0.3f), crossProduct(vec3(0.5f, 0.5f, 0.5f), vec3(-0.5f, 0.5f, 0.5f), vec3(0.5f,-0.5f, 0.5f)),  vec2(0.0f, 1.0f)),
-        Vertex(vec3( 0.5f,-0.5f, 0.5f), vec3(0.1f, 0.1f, 0.1f), crossProduct(vec3(0.5f, 0.5f, 0.5f), vec3(-0.5f, 0.5f, 0.5f), vec3(0.5f,-0.5f, 0.5f)),  vec2(1.0f, 0.0f)),
+        Vertex(vec3(0.5f,-0.5f, 0.5f), vec3(0.1f, 0.1f, 0.1f), crossProduct(vec3(0.5f, 0.5f, 0.5f), vec3(-0.5f, 0.5f, 0.5f), vec3(0.5f,-0.5f, 0.5f)),  vec2(1.0f, 0.0f)),
 
-        Vertex(vec3( 0.5f, 0.5f, 0.5f), vec3(0.6f, 0.6f, 0.6f), crossProduct(vec3(0.5f, 0.5f, 0.5f), vec3(0.5f,-0.5f,-0.5f), vec3(0.5f, 0.5f,-0.5f)),  vec2(1.0f, 1.0f)),
-        Vertex(vec3( 0.5f,-0.5f,-0.5f), vec3(0.3f, 0.3f, 0.3f), crossProduct(vec3(0.5f, 0.5f, 0.5f), vec3(0.5f,-0.5f,-0.5f), vec3(0.5f, 0.5f,-0.5f)),  vec2(0.0f, 0.0f)),
-        Vertex(vec3( 0.5f, 0.5f,-0.5f), vec3(0.1f, 0.1f, 0.1f), crossProduct(vec3(0.5f, 0.5f, 0.5f), vec3(0.5f,-0.5f,-0.5f), vec3(0.5f, 0.5f,-0.5f)),  vec2(1.0f, 0.0f)),
-        
-        Vertex(vec3( 0.5f,-0.5f,-0.5f), vec3(0.6f, 0.6f, 0.6f), crossProduct(vec3(0.5f,-0.5f,-0.5f), vec3(0.5f, 0.5f, 0.5f), vec3(0.5f,-0.5f, 0.5f)),  vec2(0.0f, 0.0f)),
-        Vertex(vec3( 0.5f, 0.5f, 0.5f), vec3(0.3f, 0.3f, 0.3f), crossProduct(vec3(0.5f,-0.5f,-0.5f), vec3(0.5f, 0.5f, 0.5f), vec3(0.5f,-0.5f, 0.5f)),  vec2(1.0f, 1.0f)),
-        Vertex(vec3( 0.5f,-0.5f, 0.5f), vec3(0.1f, 0.1f, 0.1f), crossProduct(vec3(0.5f,-0.5f,-0.5f), vec3(0.5f, 0.5f, 0.5f), vec3(0.5f,-0.5f, 0.5f)),  vec2(0.0f, 1.0f)),
+        Vertex(vec3(0.5f, 0.5f, 0.5f), vec3(0.6f, 0.6f, 0.6f), crossProduct(vec3(0.5f, 0.5f, 0.5f), vec3(0.5f,-0.5f,-0.5f), vec3(0.5f, 0.5f,-0.5f)),  vec2(1.0f, 1.0f)),
+        Vertex(vec3(0.5f,-0.5f,-0.5f), vec3(0.3f, 0.3f, 0.3f), crossProduct(vec3(0.5f, 0.5f, 0.5f), vec3(0.5f,-0.5f,-0.5f), vec3(0.5f, 0.5f,-0.5f)),  vec2(0.0f, 0.0f)),
+        Vertex(vec3(0.5f, 0.5f,-0.5f), vec3(0.1f, 0.1f, 0.1f), crossProduct(vec3(0.5f, 0.5f, 0.5f), vec3(0.5f,-0.5f,-0.5f), vec3(0.5f, 0.5f,-0.5f)),  vec2(1.0f, 0.0f)),
 
-        Vertex(vec3( 0.5f, 0.5f, 0.5f), vec3(0.6f, 0.6f, 0.6f), crossProduct(vec3(0.5f, 0.5f, 0.5f), vec3(0.5f, 0.5f,-0.5f), vec3(-0.5f, 0.5f,-0.5f)),  vec2(1.0f, 1.0f)),
-        Vertex(vec3( 0.5f, 0.5f,-0.5f), vec3(0.3f, 0.3f, 0.3f), crossProduct(vec3(0.5f, 0.5f, 0.5f), vec3(0.5f, 0.5f,-0.5f), vec3(-0.5f, 0.5f,-0.5f)),  vec2(1.0f, 0.0f)),
+        Vertex(vec3(0.5f,-0.5f,-0.5f), vec3(0.6f, 0.6f, 0.6f), crossProduct(vec3(0.5f,-0.5f,-0.5f), vec3(0.5f, 0.5f, 0.5f), vec3(0.5f,-0.5f, 0.5f)),  vec2(0.0f, 0.0f)),
+        Vertex(vec3(0.5f, 0.5f, 0.5f), vec3(0.3f, 0.3f, 0.3f), crossProduct(vec3(0.5f,-0.5f,-0.5f), vec3(0.5f, 0.5f, 0.5f), vec3(0.5f,-0.5f, 0.5f)),  vec2(1.0f, 1.0f)),
+        Vertex(vec3(0.5f,-0.5f, 0.5f), vec3(0.1f, 0.1f, 0.1f), crossProduct(vec3(0.5f,-0.5f,-0.5f), vec3(0.5f, 0.5f, 0.5f), vec3(0.5f,-0.5f, 0.5f)),  vec2(0.0f, 1.0f)),
+
+        Vertex(vec3(0.5f, 0.5f, 0.5f), vec3(0.6f, 0.6f, 0.6f), crossProduct(vec3(0.5f, 0.5f, 0.5f), vec3(0.5f, 0.5f,-0.5f), vec3(-0.5f, 0.5f,-0.5f)),  vec2(1.0f, 1.0f)),
+        Vertex(vec3(0.5f, 0.5f,-0.5f), vec3(0.3f, 0.3f, 0.3f), crossProduct(vec3(0.5f, 0.5f, 0.5f), vec3(0.5f, 0.5f,-0.5f), vec3(-0.5f, 0.5f,-0.5f)),  vec2(1.0f, 0.0f)),
         Vertex(vec3(-0.5f, 0.5f,-0.5f), vec3(0.1f, 0.1f, 0.1f), crossProduct(vec3(0.5f, 0.5f, 0.5f), vec3(0.5f, 0.5f,-0.5f), vec3(-0.5f, 0.5f,-0.5f)),  vec2(0.0f, 0.0f)),
-        
-        Vertex(vec3( 0.5f, 0.5f, 0.5f), vec3(0.6f, 0.6f, 0.6f), crossProduct(vec3(0.5f, 0.5f, 0.5f), vec3(-0.5f, 0.5f,-0.5f), vec3(-0.5f, 0.5f, 0.5f)),  vec2(1.0f, 1.0f)),
+
+        Vertex(vec3(0.5f, 0.5f, 0.5f), vec3(0.6f, 0.6f, 0.6f), crossProduct(vec3(0.5f, 0.5f, 0.5f), vec3(-0.5f, 0.5f,-0.5f), vec3(-0.5f, 0.5f, 0.5f)),  vec2(1.0f, 1.0f)),
         Vertex(vec3(-0.5f, 0.5f,-0.5f), vec3(0.3f, 0.3f, 0.3f), crossProduct(vec3(0.5f, 0.5f, 0.5f), vec3(-0.5f, 0.5f,-0.5f), vec3(-0.5f, 0.5f, 0.5f)),  vec2(0.0f, 0.0f)),
         Vertex(vec3(-0.5f, 0.5f, 0.5f), vec3(0.1f, 0.1f, 0.1f), crossProduct(vec3(0.5f, 0.5f, 0.5f), vec3(-0.5f, 0.5f,-0.5f), vec3(-0.5f, 0.5f, 0.5f)),  vec2(0.0f, 1.0f)),
     };
@@ -222,7 +328,7 @@ int main()
 
     // Texture attribute
     glVertexAttribPointer(3, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)(3 * sizeof(vec3)));
-    glEnableVertexAttribArray(3);    
+    glEnableVertexAttribArray(3);
 
     vector<vec3> sphereArray = generateSphere(1.0f, 48);
 
@@ -284,7 +390,7 @@ int main()
 
     //setting up texture packs
     vector<GLuint> texturePackNormal = { redTextureID, yellowTextureID, greenTextureID, whiteTextureID, blueTextureID, orangeTextureID };
-   
+
     float lightAngleOuter = radians(30.0f);
     float lightAngleInner = radians(20.0f);
 
@@ -303,12 +409,35 @@ int main()
     //enable OpenGL components
     glEnable(GL_CULL_FACE);
     glEnable(GL_DEPTH_TEST);
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 
     int width, height;
     float scaleFactor = 0.0f;
 
-    ShadowShader.use();
+        int choose = 1; //choosing the model
+
+        //choosing specific cameras
+    vec3 storedCameraPosition = vec3(1.0f);
+    vec2 storedCameraAngle = vec2(1.0f);
+    int chooseCamera = 0;
+    float bulletTimeAngle = 0.0f;
+
+    int lightOldState = GLFW_RELEASE;
+    int cam1OldState = GLFW_RELEASE;
+    int cam2OldState = GLFW_RELEASE;
+    int cam4OldState = GLFW_RELEASE;
+
+    int skyboxChoose = 0;
+
+    string timer = "";
+    string time = "";
+    int TimeUpdate = 0;
+    double seconds = 0.0;
+    double newseconds = 0.0;
+
+        ShadowShader.use();
     //creating all cube objects
     Rubiks_Cube normalCube = Rubiks_Cube(normalCubePosition, texturePackNormal);
     normalCube.generateCube(ShadowShader);
@@ -341,6 +470,10 @@ int main()
         NotAffectedByLightingShader.use();
         NotAffectedByLightingShader.setMat4("projectionMatrix", projectionMatrix);
 
+        mat4 projection = ortho(0.0f, static_cast<float>(1024), 0.0f, static_cast<float>(768));
+        TextShader.use();
+        TextShader.setMat4("projection", projection);
+
         // Frame time calculation
         float dt = glfwGetTime() - lastFrameTime;
         lastFrameTime += dt;
@@ -349,39 +482,54 @@ int main()
         glClear(GL_COLOR_BUFFER_BIT);
         glClear(GL_DEPTH_BUFFER_BIT);
 
+            //Rendering Text
+
+            if (TimeUpdate == 0) 
+            {
+                seconds = glfwGetTime();
+                timer = to_string(120.0 - seconds);
+            }
+            else if (TimeUpdate == 1)
+            {
+                timer = to_string(120.0 - seconds);
+            }
+            else if (TimeUpdate == 2) 
+            {
+                newseconds = glfwGetTime();
+                timer = to_string(120.0 - newseconds);
+            }
+
         //modules for controlling model and world behaviour =================================================================================================================
 
-        //Q = rotate left
-        //E = rotate right
+            //modules for controlling model and world behaviour =================================================================================================================
 
-        int newStateQ = glfwGetKey(window, GLFW_KEY_Q);
+            //Q = rotate left
+            //E = rotate right
+
+            int newStateQ = glfwGetKey(window, GLFW_KEY_Q);
         if (newStateQ == GLFW_RELEASE && oldStateQ == GLFW_PRESS) {
             normalCube.rotate_y0("left");
-            engine->play2D("rotateRubiksCube.mp3", false);
         }
         oldStateQ = newStateQ;
 
         int newStateE = glfwGetKey(window, GLFW_KEY_E);
         if (newStateE == GLFW_RELEASE && oldStateE == GLFW_PRESS) {
             normalCube.rotate_y0("right");
-            engine->play2D("rotateRubiksCube.mp3", false);
         }
         oldStateE = newStateE;
-       
+
         //moving selection block: up/down/left/right/u/j
 
         int newStateUp = glfwGetKey(window, GLFW_KEY_UP);
         if (newStateUp == GLFW_RELEASE && oldStateUp == GLFW_PRESS) {
             if (selectCord.z != 0) {
                 selectCord.z -= 1;
-                engine->play2D("selectNewBlock.mp3", false);
 
                 if (selectCord == vec3(1.0f)) {
                     selectCord.z -= 1;
-                    engine->play2D("selectNewBlock.mp3", false);
                 }
             }
-            
+
         }
         oldStateUp = newStateUp;
 
@@ -389,11 +537,9 @@ int main()
         if (newStateDown == GLFW_RELEASE && oldStateDown == GLFW_PRESS) {
             if (selectCord.z != 2) {
                 selectCord.z += 1;
-                engine->play2D("selectNewBlock.mp3", false);
 
                 if (selectCord == vec3(1.0f)) {
                     selectCord.z += 1;
-                    engine->play2D("selectNewBlock.mp3", false);
                 }
             }
         }
@@ -403,11 +549,9 @@ int main()
         if (newStateLeft == GLFW_RELEASE && oldStateLeft == GLFW_PRESS) {
             if (selectCord.x != 0) {
                 selectCord.x -= 1;
-                engine->play2D("selectNewBlock.mp3", false);
 
                 if (selectCord == vec3(1.0f)) {
                     selectCord.x -= 1;
-                    engine->play2D("selectNewBlock.mp3", false);
                 }
             }
         }
@@ -417,11 +561,9 @@ int main()
         if (newStateRight == GLFW_RELEASE && oldStateRight == GLFW_PRESS) {
             if (selectCord.x != 2) {
                 selectCord.x += 1;
-                engine->play2D("selectNewBlock.mp3", false);
 
                 if (selectCord == vec3(1.0f)) {
                     selectCord.x += 1;
-                    engine->play2D("selectNewBlock.mp3", false);
                 }
             }
         }
@@ -431,11 +573,9 @@ int main()
         if (newStateU == GLFW_RELEASE && oldStateU == GLFW_PRESS) {
             if (selectCord.y != 2) {
                 selectCord.y += 1;
-                engine->play2D("selectNewBlock.mp3", false);
 
                 if (selectCord == vec3(1.0f)) {
                     selectCord.y += 1;
-                    engine->play2D("selectNewBlock.mp3", false);
                 }
             }
         }
@@ -445,21 +585,34 @@ int main()
         if (newStateJ == GLFW_RELEASE && oldStateJ == GLFW_PRESS) {
             if (selectCord.y != 0) {
                 selectCord.y -= 1;
-                engine->play2D("selectNewBlock.mp3", false);
 
                 if (selectCord == vec3(1.0f)) {
                     selectCord.y -= 1;
-                    engine->play2D("selectNewBlock.mp3", false);
                 }
             }
         }
         oldStateJ = newStateJ;
 
+            if (glfwGetKey(window, GLFW_KEY_0) == GLFW_PRESS) // pause timer
+            {
+                TimeUpdate = 0;
+            }
+
+            if(glfwGetKey(window, GLFW_KEY_9) == GLFW_PRESS)
+            {
+                TimeUpdate = 1;
+            }
+
+            /*if (glfwGetKey(window, GLFW_KEY_8) == GLFW_PRESS)
+            {
+                TimeUpdate = 2;
+            }*/
+
         //drawing everything ==================================================================================================
 
-        
+
         vec3 lightDirection = normalize(lightFocus - lightPos);
- 
+
 
         float lightNearPlane = 0.01f;
         float lightFarPlane = 400.0f;
@@ -478,7 +631,7 @@ int main()
         AffectedByLightingShader.setVec3("lightPos", lightPos);
         AffectedByLightingShader.setVec3("light_direction", lightDirection);
         AffectedByLightingShader.setVec3("viewPos", cameraPosition);
-       
+
 
         //////////////////////////////////////////////
         //FIRST PASS/////////////////////////////////
@@ -491,6 +644,11 @@ int main()
         // Clear depth data on the framebuffer
         glClear(GL_DEPTH_BUFFER_BIT);
         // Bind geometry
+
+        RenderText(TextShader, "Timer:", 25.0f, 25.0f, 1.0f, vec3(0.5, 0.8f, 0.2f));
+        RenderText(TextShader, timer, 200.0f, 25.0f, 1.0f, vec3(0.5, 0.8f, 0.2f));
+
+
         glBindVertexArray(cubeVAO);
 
         ShadowShader.use();
@@ -505,12 +663,12 @@ int main()
         selectCube.setDefaultSize(vec3(1.01f));
         selectCube.drawModel();
 
-         //drawing skybox
+        //drawing skybox
         glBindTexture(GL_TEXTURE_2D, skyboxTextureID);
         mat4 skybox = translate(mat4(1.0f), cameraPosition) * scale(mat4(1.0f), vec3(-500.0f));
         ShadowShader.setMat4("worldMatrix", skybox);
         glDrawArrays(GL_TRIANGLES, 0, 36); // 36 vertices, starting at index 0
-        
+
         glBindTexture(GL_TEXTURE_2D, 0);
 
         glBindVertexArray(0);
@@ -520,22 +678,27 @@ int main()
         ///////////SECOND PASS////////////
         //////////////////////////////////
 
-         AffectedByLightingShader.use();
+        AffectedByLightingShader.use();
         // Use proper image output size
         // Side note: we get the size from the framebuffer instead of using WIDTH
         // and HEIGHT because of a bug with highDPI displays
         int width, height;
         glfwGetFramebufferSize(window, &width, &height);
         glViewport(0, 0, width, height);
-         // Bind screen as output framebuffer
+        // Bind screen as output framebuffer
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
         // Clear color and depth data on framebuffer
         glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-         // Bind depth map texture: not needed, by default it is active
-         glActiveTexture(GL_TEXTURE0);
-         // Activate any texture unit you use for your models
-         // Bind geometry
+        // Bind depth map texture: not needed, by default it is active
+        glActiveTexture(GL_TEXTURE0);
+        // Activate any texture unit you use for your models
+        // Bind geometry
+
+        RenderText(TextShader, "Timer:", 25.0f, 25.0f, 1.0f, vec3(0.5, 0.8f, 0.2f));
+        RenderText(TextShader, timer, 200.0f, 25.0f, 1.0f, vec3(0.5, 0.8f, 0.2f));
+
+
         glBindVertexArray(cubeVAO);
 
         AffectedByLightingShader.use();
@@ -841,4 +1004,48 @@ vector<vec3> generateSphere(float radius, int polyCount) {
         }
     }
     return result;
+}
+
+void RenderText(Shader& s, string text, float x, float y, float scale, vec3 color)
+{
+    // activate corresponding render state	
+    s.use();
+    glUniform3f(glGetUniformLocation(s.ID, "textColor"), color.x, color.y, color.z);
+    glActiveTexture(GL_TEXTURE0);
+    glBindVertexArray(charVAO);
+
+    // iterate through all characters
+    string::const_iterator c;
+    for (c = text.begin(); c != text.end(); c++)
+    {
+        Character ch = Characters[*c];
+
+        float xpos = x + ch.Bearing.x * scale;
+        float ypos = y - (ch.Size.y - ch.Bearing.y) * scale;
+
+        float w = ch.Size.x * scale;
+        float h = ch.Size.y * scale;
+        // update VBO for each character
+        float vertices[6][4] = {
+            { xpos,     ypos + h,   0.0f, 0.0f },
+            { xpos,     ypos,       0.0f, 1.0f },
+            { xpos + w, ypos,       1.0f, 1.0f },
+
+            { xpos,     ypos + h,   0.0f, 0.0f },
+            { xpos + w, ypos,       1.0f, 1.0f },
+            { xpos + w, ypos + h,   1.0f, 0.0f }
+        };
+        // render glyph texture over quad
+        glBindTexture(GL_TEXTURE_2D, ch.TextureID);
+        // update content of VBO memory
+        glBindBuffer(GL_ARRAY_BUFFER, charVBO);
+        glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(vertices), vertices);
+        glBindBuffer(GL_ARRAY_BUFFER, 0);
+        // render quad
+        glDrawArrays(GL_TRIANGLES, 0, 6);
+        // now advance cursors for next glyph (note that advance is number of 1/64 pixels)
+        x += (ch.Advance >> 6) * scale; // bitshift by 6 to get value in pixels (2^6 = 64)
+    }
+    glBindVertexArray(0);
+    glBindTexture(GL_TEXTURE_2D, 0);
 }
