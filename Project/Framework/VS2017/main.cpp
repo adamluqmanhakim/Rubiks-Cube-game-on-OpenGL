@@ -357,12 +357,14 @@ int main()
         int newStateQ = glfwGetKey(window, GLFW_KEY_Q);
         if (newStateQ == GLFW_RELEASE && oldStateQ == GLFW_PRESS) {
             normalCube.rotate_y0("left");
+            engine->play2D("rotateRubiksCube.mp3", false);
         }
         oldStateQ = newStateQ;
 
         int newStateE = glfwGetKey(window, GLFW_KEY_E);
         if (newStateE == GLFW_RELEASE && oldStateE == GLFW_PRESS) {
             normalCube.rotate_y0("right");
+            engine->play2D("rotateRubiksCube.mp3", false);
         }
         oldStateE = newStateE;
        
@@ -372,9 +374,11 @@ int main()
         if (newStateUp == GLFW_RELEASE && oldStateUp == GLFW_PRESS) {
             if (selectCord.z != 0) {
                 selectCord.z -= 1;
+                engine->play2D("selectNewBlock.mp3", false);
 
                 if (selectCord == vec3(1.0f)) {
                     selectCord.z -= 1;
+                    engine->play2D("selectNewBlock.mp3", false);
                 }
             }
             
@@ -385,9 +389,11 @@ int main()
         if (newStateDown == GLFW_RELEASE && oldStateDown == GLFW_PRESS) {
             if (selectCord.z != 2) {
                 selectCord.z += 1;
+                engine->play2D("selectNewBlock.mp3", false);
 
                 if (selectCord == vec3(1.0f)) {
                     selectCord.z += 1;
+                    engine->play2D("selectNewBlock.mp3", false);
                 }
             }
         }
@@ -397,9 +403,11 @@ int main()
         if (newStateLeft == GLFW_RELEASE && oldStateLeft == GLFW_PRESS) {
             if (selectCord.x != 0) {
                 selectCord.x -= 1;
+                engine->play2D("selectNewBlock.mp3", false);
 
                 if (selectCord == vec3(1.0f)) {
                     selectCord.x -= 1;
+                    engine->play2D("selectNewBlock.mp3", false);
                 }
             }
         }
@@ -409,9 +417,11 @@ int main()
         if (newStateRight == GLFW_RELEASE && oldStateRight == GLFW_PRESS) {
             if (selectCord.x != 2) {
                 selectCord.x += 1;
+                engine->play2D("selectNewBlock.mp3", false);
 
                 if (selectCord == vec3(1.0f)) {
                     selectCord.x += 1;
+                    engine->play2D("selectNewBlock.mp3", false);
                 }
             }
         }
@@ -421,9 +431,11 @@ int main()
         if (newStateU == GLFW_RELEASE && oldStateU == GLFW_PRESS) {
             if (selectCord.y != 2) {
                 selectCord.y += 1;
+                engine->play2D("selectNewBlock.mp3", false);
 
                 if (selectCord == vec3(1.0f)) {
                     selectCord.y += 1;
+                    engine->play2D("selectNewBlock.mp3", false);
                 }
             }
         }
@@ -433,9 +445,11 @@ int main()
         if (newStateJ == GLFW_RELEASE && oldStateJ == GLFW_PRESS) {
             if (selectCord.y != 0) {
                 selectCord.y -= 1;
+                engine->play2D("selectNewBlock.mp3", false);
 
                 if (selectCord == vec3(1.0f)) {
                     selectCord.y -= 1;
+                    engine->play2D("selectNewBlock.mp3", false);
                 }
             }
         }
