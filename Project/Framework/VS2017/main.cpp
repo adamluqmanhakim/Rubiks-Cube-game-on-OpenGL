@@ -306,6 +306,11 @@ int main()
     //setting up for button debouncing 
     int oldStateQ = GLFW_RELEASE;
     int oldStateE = GLFW_RELEASE;
+    int oldStateZ = GLFW_RELEASE;
+    int oldStateC = GLFW_RELEASE;
+    int oldStateR = GLFW_RELEASE;
+    int oldStateV = GLFW_RELEASE;
+
 
     int oldStateUp = GLFW_RELEASE;
     int oldStateDown = GLFW_RELEASE;
@@ -314,10 +319,14 @@ int main()
     int oldStateU = GLFW_RELEASE;
     int oldStateJ = GLFW_RELEASE;
 
+    int oldStateF1 = GLFW_RELEASE;
+    int oldStateF2 = GLFW_RELEASE;
 
     // Entering Game Loop
     while (!glfwWindowShouldClose(window))
     {
+        bool debugTick = false; 
+
         NotAffectedByLightingShader.use();
         NotAffectedByLightingShader.setInt("currentAxis", 0);
 
@@ -343,18 +352,58 @@ int main()
 
         //Q = rotate left
         //E = rotate right
+        //Z = tilt left
+        //C = tilt right
+        //R = rotate up
+        //V = rotate down
 
         int newStateQ = glfwGetKey(window, GLFW_KEY_Q);
         if (newStateQ == GLFW_RELEASE && oldStateQ == GLFW_PRESS) {
-            normalCube.rotate_y0("left");
+            normalCube.rotate_y("CCW", selectCord.y);
+            debugTick = true;
+
         }
         oldStateQ = newStateQ;
 
         int newStateE = glfwGetKey(window, GLFW_KEY_E);
         if (newStateE == GLFW_RELEASE && oldStateE == GLFW_PRESS) {
-            normalCube.rotate_y0("right");
+            normalCube.rotate_y("CW", selectCord.y);
+            debugTick = true;
+
         }
         oldStateE = newStateE;
+
+        int newStateZ = glfwGetKey(window, GLFW_KEY_Z);
+        if (newStateZ == GLFW_RELEASE && oldStateZ == GLFW_PRESS) {
+            normalCube.rotate_z("CCW", selectCord.z);
+            debugTick = true;
+
+        }
+        oldStateZ = newStateZ;
+
+        int newStateC = glfwGetKey(window, GLFW_KEY_C);
+        if (newStateC == GLFW_RELEASE && oldStateC == GLFW_PRESS) {
+            normalCube.rotate_z("CW", selectCord.z);
+            debugTick = true;
+
+        }
+        oldStateC = newStateC;
+
+        int newStateR = glfwGetKey(window, GLFW_KEY_R);
+        if (newStateR == GLFW_RELEASE && oldStateR == GLFW_PRESS) {
+            normalCube.rotate_x("CCW", selectCord.x);
+            debugTick = true;
+
+        }
+        oldStateR = newStateR;
+
+        int newStateV = glfwGetKey(window, GLFW_KEY_V);
+        if (newStateV == GLFW_RELEASE && oldStateV == GLFW_PRESS) {
+            normalCube.rotate_x("CW", selectCord.x);
+            debugTick = true;
+
+        }
+        oldStateV = newStateV;
        
         //moving selection block: up/down/left/right/u/j
 
@@ -431,6 +480,17 @@ int main()
         }
         oldStateJ = newStateJ;
 
+        //reset cube 
+        int newStateF1 = glfwGetKey(window, GLFW_KEY_F1);
+        if (newStateF1 == GLFW_RELEASE && oldStateF1 == GLFW_PRESS) {
+            normalCube.resetPosition();
+        }
+        oldStateF1 = newStateF1;
+
+        if (debugTick == true) {
+            //normalCube.debug();
+        }
+
         //drawing everything ==================================================================================================
 
         
@@ -490,6 +550,7 @@ int main()
         glBindTexture(GL_TEXTURE_2D, 0);
 
         glBindVertexArray(0);
+
         //glBindTexture(GL_TEXTURE_2D, 0);
 
         //////////////////////////////////

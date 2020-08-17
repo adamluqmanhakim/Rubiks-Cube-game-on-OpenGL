@@ -1,5 +1,12 @@
 #include "Rubiks_Cube.h"
-#include <dos.h>
+#include <ctime>
+
+
+void delay(int ms) {
+    clock_t goal = ms + clock();
+    while (goal > clock());
+    return;
+}
 
 Rubiks_Cube::Rubiks_Cube() {
 
@@ -16,7 +23,9 @@ void Rubiks_Cube::generateCube(Shader S) {
             for (int z = 0; z < 3; z++) {
                 Cube newCube = Cube(vec3(1.0f), S);
                 newCube.setDefaultPosition(vec3(x - 1, y - 1, z - 1) + position);
-                cubeArray[x][y][z] = newCube;
+                newCube.setPositionTag(vec3(x, y, z));
+                newCube.setInitialPositionTag(vec3(x, y, z));
+                cubeArray.push_back(newCube);
                 newCube.drawModel();
             }
         }
@@ -24,87 +33,132 @@ void Rubiks_Cube::generateCube(Shader S) {
 }
 
 void Rubiks_Cube::setShader(Shader S) {
-    for (int x = 0; x < 3; x++) {
-        for (int y = 0; y < 3; y++) {
-            for (int z = 0; z < 3; z++) {
-                cubeArray[x][y][z].setCurrentShader(S);
-
-            }
-        }
+    for (int i = 0; i < 27; i++) {
+        cubeArray[i].setCurrentShader(S);
     }
 }
 
 void Rubiks_Cube::drawModel() {
     glBindTexture(GL_TEXTURE_2D, 0);
 
-    //draw bottom face 
-    glBindTexture(GL_TEXTURE_2D, texturePack[0]);
-    for (int x = 0; x < 3; x++) {
-        for (int z = 0; z < 3; z++) {
-            cubeArray[x][0][z].drawBotFace();
-        }
-    }
+    for (int i = 0; i < 27; i++) {
+        glBindTexture(GL_TEXTURE_2D, texturePack[0]);
+        if (cubeArray[i].getInitialPositionTag().y == 0) cubeArray[i].drawBotFace();
 
-    //draw top face
-    glBindTexture(GL_TEXTURE_2D, texturePack[1]);
-    for (int x = 0; x < 3; x++) {
-        for (int z = 0; z < 3; z++) {
-            cubeArray[x][2][z].drawTopFace();
-        }
-    }
+        glBindTexture(GL_TEXTURE_2D, texturePack[1]);
+        if (cubeArray[i].getInitialPositionTag().y == 2) cubeArray[i].drawTopFace();
 
-    //draw left face
-    glBindTexture(GL_TEXTURE_2D, texturePack[2]);
-    for (int y = 0; y < 3; y++) {
-        for (int z = 0; z < 3; z++) {
-            cubeArray[0][y][z].drawLeftFace();
-        }
-    }
+        glBindTexture(GL_TEXTURE_2D, texturePack[2]);
+        if (cubeArray[i].getInitialPositionTag().x == 0) cubeArray[i].drawLeftFace();
 
-    //draw right face
-    glBindTexture(GL_TEXTURE_2D, texturePack[3]);
-    for (int y = 0; y < 3; y++) {
-        for (int z = 0; z < 3; z++) {
-            cubeArray[2][y][z].drawRightFace();
-        }
-    }
+        glBindTexture(GL_TEXTURE_2D, texturePack[3]);
+        if (cubeArray[i].getInitialPositionTag().x == 2) cubeArray[i].drawRightFace();
 
-    //draw Front face
-    glBindTexture(GL_TEXTURE_2D, texturePack[4]);
-    for (int x = 0; x < 3; x++) {
-        for (int y = 0; y < 3; y++) {
-            cubeArray[x][y][2].drawFrontFace();
-        }
-    }
+        glBindTexture(GL_TEXTURE_2D, texturePack[4]);
+        if (cubeArray[i].getInitialPositionTag().z == 0) cubeArray[i].drawBackFace();
 
-    //draw back face
-    glBindTexture(GL_TEXTURE_2D, texturePack[5]);
-    for (int x = 0; x < 3; x++) {
-        for (int y = 0; y < 3; y++) {
-            cubeArray[x][y][0].drawBackFace();
-        }
+        glBindTexture(GL_TEXTURE_2D, texturePack[5]);
+        if (cubeArray[i].getInitialPositionTag().z == 2) cubeArray[i].drawFrontFace();
+
     }
 }
 
-void Rubiks_Cube::rotate_y0(string direction) {
+void Rubiks_Cube::rotate_y(string direction, int y) {
+    if (direction == "CCW") {
+        rotateFactor.y = -90;
+    }
 
-    for (int i = 0; i < 90; i++) {
-        if (direction == "left") {
-            rotateFactory1--;
-            //insert delay here
+    else if (direction == "CW") {
+        rotateFactor.y = 90;
+    }
+
+    mat4 rotateMatrix = rotate(mat4(1.0f), radians(rotateFactor.y), vec3(0.0f, 1.0f, 0.0f));
+
+    for (int i = 0; i < cubeArray.size(); i++) {
+        if (cubeArray[i].getPositionTag().y == y) {
+            cubeArray[i].rotateCube(rotateMatrix);
+        }
+    }
+    
+    //re-set position tag to fit the newly rotated cube
+    for (int i = 0; i < cubeArray.size(); i++) {
+        cubeArray[i].rotatePositionTagY(direction, y);
+    }
+}
+
+void Rubiks_Cube::rotate_x(string direction, int x) {
+    if (direction == "CCW") {
+        rotateFactor.x = 90;
+    }
+
+    else if (direction == "CW") {
+        rotateFactor.x = -90;
+    }
+
+    //set rotation matrix
+    mat4 rotateMatrix = rotate(mat4(1.0f), radians(rotateFactor.x), vec3(1.0f, 0.0f, 0.0f));
+
+    //perform rotation (using said matrix)
+    for (int i = 0; i < cubeArray.size(); i++) {
+        if (cubeArray[i].getPositionTag().x == x) cubeArray[i].rotateCube(rotateMatrix);
+            
+    }
+
+    //re-set position tag to fit the newly rotated cube
+    for (int i = 0; i < cubeArray.size(); i++) {
+        cubeArray[i].rotatePositionTagX(direction, x);
+
+    }
+}
+
+void Rubiks_Cube::rotate_z(string direction, int z) {
+    if (direction == "CCW") {
+        rotateFactor.z = 90;
+    }
+
+    else if (direction == "CW") {
+        rotateFactor.z = -90;
+    }
+
+    mat4 rotateMatrix = rotate(mat4(1.0f), radians(rotateFactor.z), vec3(0.0f, 0.0f, 1.0f));
+
+    for (int i = 0; i < cubeArray.size(); i++) {
+        if (cubeArray[i].getPositionTag().z == z) cubeArray[i].rotateCube(rotateMatrix);
+    }
+
+    //re-set position tag to fit the newly rotated cube
+    for (int i = 0; i < cubeArray.size(); i++) {
+        cubeArray[i].rotatePositionTagZ(direction, z);
+    }
+}
+
+void Rubiks_Cube::resetPosition() {
+
+    for (int i = 0; i < cubeArray.size(); i++) {
+        cubeArray[i].setDefaultRotation(rotate(mat4(1.0f), radians(0.0f), vec3(0.0f, 1.0f, 0.0f)));
+        cubeArray[i].setPositionTag(cubeArray[i].getInitialPositionTag());
+    }
+
+}
+
+void Rubiks_Cube::debug() {
+    /*for (int i = 0; i < cubeArray.size(); i++) {
+        if (cubeArray[i].getPositionTag().y == 0) {
+            cubeArray[i].printPositionTag();
         }
 
-        else if (direction == "right") {
-            rotateFactory1++;
-            //insert delay here
+        if (cubeArray[i].getPositionTag().y == 1) {
+            cubeArray[i].printPositionTag();
         }
 
-        mat4 rotateMatrix = rotate(mat4(1.0f), radians(rotateFactory1), vec3(0.0f, 1.0f, 0.0f));
+        if (cubeArray[i].getPositionTag().y == 2) {
+            cubeArray[i].printPositionTag();
+        }
+    }*/
 
-        for (int x = 0; x < 3; x++) {
-            for (int z = 0; z < 3; z++) {
-                cubeArray[x][0][z].setCustomRotation(rotateMatrix);
-            }
+    for (int i = 0; i < cubeArray.size(); i++) {
+        if (cubeArray[i].getInitialPositionTag() == vec3(0.0f)) {
+            cubeArray[i].printPositionTag();
         }
     }
 }

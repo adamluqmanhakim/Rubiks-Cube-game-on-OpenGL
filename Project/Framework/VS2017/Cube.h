@@ -15,38 +15,42 @@ using namespace glm;
 class Cube
 {
 private:
-	vec3 position;
 	vec3 size = vec3(1.0f);
-	vec3 baseTranslation;
-	vec3 basePosition;
+	vec3 basePosition = vec3(1.0f);
 
-	float baseRotation = 0.0f;
+	mat4 baseRotationMatrix = rotate(mat4(1.0f), radians(0.0f), vec3(0.0f, 1.0f, 0.0f));
 
-	mat4 customRotation = rotate(mat4(1.0f), radians(0.0f), vec3(0.0f, 1.0f, 0.0f));
 	mat4 customTranslation = mat4(1.0f);
-
-	mat4 modelMatrix;
-
+	mat4 customRotation = mat4(1.0f);
+	mat4 modelMatrix = mat4(1.0f);
 	float currentScaleFactor = 1.0f;
 
 	Shader currentShader;
 
-	int modelMode;
+	vec3 positionTag; //specifically for rubik's cube 
+	vec3 initialPositionTag; //for drawing 
+
 
 public: 
 	Cube();
 	Cube(vec3 basePos, Shader S);
 
 	void setDefaultSize(vec3 s);
-	void setDefaultRotation(float angle);
+	void setDefaultRotation(mat4 rotationMatrix);
 	void setDefaultPosition(vec3 pos);
 
 	void update();
-	void setCustomRotation(mat4 rotationMatrix);
+
 	void setCustomTranslation(vec3 offset);
 	void setCustomScaling(float scaleFactor);
 
 	void setCurrentShader(Shader S);
+
+	void setPositionTag(vec3 tag);
+	vec3 getPositionTag();
+
+	void setInitialPositionTag(vec3 tag);
+	vec3 getInitialPositionTag();
 
 	void setDepthMap(mat4 lightProjMatrix, mat4 lightViewMatrix);
 	void drawLeftFace();
@@ -56,4 +60,13 @@ public:
 	void drawTopFace();
 	void drawBotFace();
 	void drawModel();
+
+	//specifically for rubik's cube 
+	void rotatePositionTagX(string direction, int x);
+	void rotatePositionTagY(string direction, int y);
+	void rotatePositionTagZ(string direction, int z);
+
+	void printPositionTag();
+
+	void rotateCube(mat4 rotateMatrix);
 };

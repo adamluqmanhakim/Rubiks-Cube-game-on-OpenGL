@@ -8,19 +8,11 @@ using namespace std;
 
 class Rubiks_Cube {
 private:
-	array<array<array<Cube, 3>, 3>, 3> cubeArray;
-	vec3 position;
+	//array<array<array<Cube, 3>, 3>, 3> cubeArray;
+	vector<Cube> cubeArray;
+	vec3 position = vec3(0.0f);
 	vector<GLuint> texturePack;
-
-	float rotateFactory1 = 0.0f,
-		rotateFactory2 = 0.0f,
-		rotateFactory3 = 0.0f,
-		rotateFactorx0 = 0.0f,
-		rotateFactorx1 = 0.0f,
-		rotateFactorx2 = 0.0f,
-		rotateFactorz1 = 0.0f,
-		rotateFactorz2 = 0.0f,
-		rotateFactorz3 = 0.0f;
+	vec3 rotateFactor = vec3(0.0f);
 
 public:
 	Rubiks_Cube();
@@ -30,5 +22,15 @@ public:
 	void setShader(Shader S);
 	void drawModel();
 
-	void rotate_y0(string direction);
+	void rotate_y(string direction, int y);
+
+	void rotate_x(string direction, int x);
+
+	void rotate_z(string direction, int z);
+
+
+	void resetPosition();
+	void randomizePosition();
+
+	void debug();
 };
