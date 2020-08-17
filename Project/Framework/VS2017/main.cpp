@@ -322,6 +322,10 @@ int main()
     int oldStateF1 = GLFW_RELEASE;
     int oldStateF2 = GLFW_RELEASE;
 
+    //for flashlight
+    int lightOldState = GLFW_RELEASE; 
+    bool enableLight = true;
+
     // Entering Game Loop
     while (!glfwWindowShouldClose(window))
     {
@@ -420,6 +424,17 @@ int main()
         }
         oldStateUp = newStateUp;
 
+        int lightNewState = glfwGetKey(window, GLFW_KEY_TAB);
+        if (lightNewState == GLFW_RELEASE && lightOldState == GLFW_PRESS) {
+            if (enableLight == true) {
+                enableLight = false;
+            }
+            else {
+                enableLight = true;
+            }
+        }
+        lightOldState = lightNewState;
+
         int newStateDown = glfwGetKey(window, GLFW_KEY_DOWN);
         if (newStateDown == GLFW_RELEASE && oldStateDown == GLFW_PRESS) {
             if (selectCord.z != 2) {
@@ -494,7 +509,8 @@ int main()
         //drawing everything ==================================================================================================
 
         
-        vec3 lightDirection = normalize(lightFocus - lightPos);
+        //vec3 lightDirection = normalize(lightFocus - lightPos);
+        vec3 lightDirection = cameraLookAt;
  
 
         float lightNearPlane = 0.01f;
@@ -505,8 +521,12 @@ int main()
         mat4 lightViewMatrix = lookAt(lightPos, lightFocus, vec3(0, 1, 0));
 
         AffectedByLightingShader.use();
-
-        AffectedByLightingShader.setMat4("light_proj_view_matrix", lightProjMatrix * lightViewMatrix);
+        if (enableLight == true) {
+            AffectedByLightingShader.setMat4("light_proj_view_matrix", lightProjMatrix * lightViewMatrix);
+        }
+        else {
+            AffectedByLightingShader.setMat4("light_proj_view_matrix", mat4(0.0f));
+        }
         AffectedByLightingShader.setFloat("light_near_plane", lightNearPlane);
         AffectedByLightingShader.setFloat("light_far_plane", lightFarPlane);
         AffectedByLightingShader.setVec3("objectColor", vec3(1));
@@ -708,6 +728,10 @@ int main()
         AffectedByLightingShader.setMat4("viewMatrix", viewMatrix);
         NotAffectedByLightingShader.use();
         NotAffectedByLightingShader.setMat4("viewMatrix", viewMatrix);
+
+        lightPos = cameraPosition;
+        
+
     }
 
     // Shutdown GLFW
