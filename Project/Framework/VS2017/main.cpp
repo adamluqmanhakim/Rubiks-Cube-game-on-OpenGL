@@ -58,6 +58,7 @@ const float mouseSensitivity = 50.0f;
 const unsigned int SCREEN_WIDTH = 1024;
 const unsigned int SCREEN_HEIGHT = 768;
 
+
 vec3 defaultSize = vec3(1.0f, 6.5f, 1.0f);
 
 // lighting
@@ -378,18 +379,51 @@ int main()
     GLuint skyboxTextureID = loadTexture("Textures/skybox.jpg");
     GLuint selectCubeID = loadTexture("Textures/select.png");
 #else
+    // Color rubiks cube
     GLuint redTextureID = loadTexture("../Assets/Textures/red.bmp");
     GLuint yellowTextureID = loadTexture("../Assets/Textures/yellow.bmp");
     GLuint greenTextureID = loadTexture("../Assets/Textures/green.bmp");
     GLuint whiteTextureID = loadTexture("../Assets/Textures/white.bmp");
     GLuint blueTextureID = loadTexture("../Assets/Textures/blue.bmp");
     GLuint orangeTextureID = loadTexture("../Assets/Textures/orange.bmp");
+    
+    // Animal rubiks cube
+    GLuint zebraCubeID = loadTexture("../Assets/Textures/zebra.jpg");
+    GLuint lionCubeID = loadTexture("../Assets/Textures/lion.jpg");
+    GLuint giraffeCubeID = loadTexture("../Assets/Textures/giraffe.jpg");
+    GLuint leopardCubeID = loadTexture("../Assets/Textures/leopard.jpg");
+    GLuint snakeCubeID = loadTexture("../Assets/Textures/snake.jpg");
+    GLuint whiteLeopardCubeID = loadTexture("../Assets/Textures/whiteLeopard.jpg");
+
+    // Movies rubiks cube
+    GLuint backIntoTheFutureCubeID = loadTexture("../Assets/Textures/backIntoTheFuture.jpg");
+    GLuint elfCubeID = loadTexture("../Assets/Textures/elf.jpg");
+    GLuint harryPotterCubeID = loadTexture("../Assets/Textures/harryPotter.jpg");
+    GLuint homeAloneCubeID = loadTexture("../Assets/Textures/homeAlone.jpg");
+    GLuint spaceJamCubeID = loadTexture("../Assets/Textures/spaceJam.jpg");
+    GLuint lordOfTheRingCubeID = loadTexture("../Assets/Textures/lordOfTheRing.jpg");
+
+    // Gaming characters rubiks cube
+    GLuint marioCubeID = loadTexture("../Assets/Textures/mario.jpg");
+    GLuint nessCubeID = loadTexture("../Assets/Textures/ness.jpg");
+    GLuint pikachuCubeID = loadTexture("../Assets/Textures/pikachu.jpg");
+    GLuint sonicCubeID = loadTexture("../Assets/Textures/sonic.jpeg");
+    GLuint pacmanCubeID = loadTexture("../Assets/Textures/pacman.png");
+    GLuint zeldaCubeID = loadTexture("../Assets/Textures/zelda.jpg");
+
+    // Skybox texture
     GLuint skyboxTextureID = loadTexture("../Assets/Textures/skybox.jpg");
+
+    // Selector texture
     GLuint selectCubeID = loadTexture("../Assets/Textures/select.png");
+
 #endif
 
     //setting up texture packs
-    vector<GLuint> texturePackNormal = { redTextureID, yellowTextureID, greenTextureID, whiteTextureID, blueTextureID, orangeTextureID };
+    vector<GLuint> texturePackColors = { redTextureID, yellowTextureID, greenTextureID, whiteTextureID, blueTextureID, orangeTextureID };
+    vector<GLuint> texturePackAnimals = { zebraCubeID, lionCubeID, giraffeCubeID, leopardCubeID, snakeCubeID, whiteLeopardCubeID };
+    vector<GLuint> texturePackMovies = { backIntoTheFutureCubeID, elfCubeID, harryPotterCubeID, homeAloneCubeID, spaceJamCubeID, lordOfTheRingCubeID };
+    vector<GLuint> texturePackGaming = { marioCubeID, nessCubeID, pikachuCubeID, sonicCubeID, pacmanCubeID, zeldaCubeID };
 
     float lightAngleOuter = radians(30.0f);
     float lightAngleInner = radians(20.0f);
@@ -416,9 +450,9 @@ int main()
     int width, height;
     float scaleFactor = 0.0f;
 
-        int choose = 1; //choosing the model
+    int choose = 1; //choosing the model
 
-        //choosing specific cameras
+    //choosing specific cameras
     vec3 storedCameraPosition = vec3(1.0f);
     vec2 storedCameraAngle = vec2(1.0f);
     int chooseCamera = 0;
@@ -437,9 +471,12 @@ int main()
     double seconds = 0.0;
     double newseconds = 0.0;
 
-        ShadowShader.use();
-    //creating all cube objects
-    Rubiks_Cube normalCube = Rubiks_Cube(normalCubePosition, texturePackNormal);
+    // Default texture is color pack
+    vector<GLuint> texturePack = texturePackColors;
+
+    ShadowShader.use();
+
+    Rubiks_Cube normalCube = Rubiks_Cube(normalCubePosition, texturePack);
     normalCube.generateCube(ShadowShader);
 
     //setting up for button debouncing 
@@ -494,22 +531,52 @@ int main()
         glClear(GL_COLOR_BUFFER_BIT);
         glClear(GL_DEPTH_BUFFER_BIT);
 
-            //Rendering Text
+        //Rendering Text
 
-            if (TimeUpdate == 0) 
-            {
-                seconds = glfwGetTime();
-                timer = to_string(120.0 - seconds);
-            }
-            else if (TimeUpdate == 1)
-            {
-                timer = to_string(120.0 - seconds);
-            }
-            else if (TimeUpdate == 2) 
-            {
-                newseconds = glfwGetTime();
-                timer = to_string(120.0 - newseconds);
-            }
+        if (TimeUpdate == 0) 
+        {
+            seconds = glfwGetTime();
+            timer = to_string(120.0 - seconds);
+        }
+        else if (TimeUpdate == 1)
+        {
+            timer = to_string(120.0 - seconds);
+        }
+        else if (TimeUpdate == 2) 
+        {
+            newseconds = glfwGetTime();
+            timer = to_string(120.0 - newseconds);
+        }
+
+        // Changing Rubicks cube texture
+        if (glfwGetKey(window, GLFW_KEY_1) == GLFW_PRESS) // increase camera movement speed 
+        {
+            texturePack = texturePackColors;
+            ShadowShader.use();
+            normalCube = Rubiks_Cube(normalCubePosition, texturePack);
+            normalCube.generateCube(ShadowShader);
+        }
+        if (glfwGetKey(window, GLFW_KEY_2) == GLFW_PRESS) // increase camera movement speed 
+        {
+            texturePack = texturePackAnimals;
+            ShadowShader.use();
+            normalCube = Rubiks_Cube(normalCubePosition, texturePack);
+            normalCube.generateCube(ShadowShader);
+        }
+        if (glfwGetKey(window, GLFW_KEY_3) == GLFW_PRESS) // increase camera movement speed 
+        {
+            texturePack = texturePackMovies;
+            ShadowShader.use();
+            normalCube = Rubiks_Cube(normalCubePosition, texturePack);
+            normalCube.generateCube(ShadowShader);
+        }
+        if (glfwGetKey(window, GLFW_KEY_4) == GLFW_PRESS) // increase camera movement speed 
+        {
+            texturePack = texturePackGaming;
+            ShadowShader.use();
+            normalCube = Rubiks_Cube(normalCubePosition, texturePack);
+            normalCube.generateCube(ShadowShader);
+        }
 
 
         //modules for controlling model and world behaviour =================================================================================================================

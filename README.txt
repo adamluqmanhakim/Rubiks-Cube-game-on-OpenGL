@@ -45,3 +45,9 @@ Tab: toggle light on/off (for both spin-cam light and static spotlight)
 Skybox Control ===========================
 LBRACKET: cube skybox
 RBRACKET: sphere skybox 
+
+Changing rubiks cube texture =====================
+1: colors
+2: animals
+3: movies
+4: Gaming characters
