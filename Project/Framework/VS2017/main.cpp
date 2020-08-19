@@ -466,10 +466,11 @@ int main()
     int skyboxChoose = 0;
 
     string timer = "";
-    string time = "";
+    double time = 0.0;
     int TimeUpdate = 0;
     double seconds = 0.0;
     double newseconds = 0.0;
+    bool timeUp = false;
 
     // Default texture is color pack
     vector<GLuint> texturePack = texturePackColors;
@@ -532,21 +533,27 @@ int main()
         glClear(GL_DEPTH_BUFFER_BIT);
 
         //Rendering Text
+        seconds = glfwGetTime();
+        time = 120.0 - seconds;
 
         if (TimeUpdate == 0) 
         {
-            seconds = glfwGetTime();
-            timer = to_string(120.0 - seconds);
+            if (time > 0.0) {
+                timer = to_string(time);
+            }
+            else if (time <= 0.0 && timeUp == false) {
+                seconds = 0.0;
+                timer = "0.0";
+                engine->play2D("lost.mp3", false);
+                timeUp = true;
+            }
         }
         else if (TimeUpdate == 1)
         {
-            timer = to_string(120.0 - seconds);
+            timer = to_string(time);
         }
-        else if (TimeUpdate == 2) 
-        {
-            newseconds = glfwGetTime();
-            timer = to_string(120.0 - newseconds);
-        }
+
+        
 
         // Changing Rubicks cube texture
         if (glfwGetKey(window, GLFW_KEY_1) == GLFW_PRESS) // increase camera movement speed 
