@@ -17,7 +17,6 @@ void Cube::update() {
 	mat4 translateMatrix = translate(mat4(1.0f), (basePosition)*currentScaleFactor);
 
 	modelMatrix = translateMatrix * baseRotationMatrix * scaleMatrix;
-
 }
 
 void Cube::setDefaultSize(vec3 s) {

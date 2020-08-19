@@ -458,11 +458,6 @@ int main()
     int chooseCamera = 0;
     float bulletTimeAngle = 0.0f;
 
-    int lightOldState = GLFW_RELEASE;
-    int cam1OldState = GLFW_RELEASE;
-    int cam2OldState = GLFW_RELEASE;
-    int cam4OldState = GLFW_RELEASE;
-
     int skyboxChoose = 0;
 
     string timer = "";
@@ -501,6 +496,7 @@ int main()
     int oldStateF2 = GLFW_RELEASE;
 
     //for flashlight
+    int lightOldState = GLFW_RELEASE;
     bool enableLight = true;
 
     // Entering Game Loop
@@ -615,7 +611,7 @@ int main()
             normalCube.rotate_y("CW", selectCord.y);
             engine->play2D("rotateRubiksCube.mp3", false);
             debugTick = true;
-
+            engine->play2D("rotateRubiksCube.mp3", false);
         }
         oldStateE = newStateE;
 
@@ -624,7 +620,7 @@ int main()
             normalCube.rotate_z("CCW", selectCord.z);
             engine->play2D("rotateRubiksCube.mp3", false);
             debugTick = true;
-
+            engine->play2D("rotateRubiksCube.mp3", false);
         }
         oldStateZ = newStateZ;
 
@@ -633,7 +629,7 @@ int main()
             normalCube.rotate_z("CW", selectCord.z);
             engine->play2D("rotateRubiksCube.mp3", false);
             debugTick = true;
-
+            engine->play2D("rotateRubiksCube.mp3", false);
         }
         oldStateC = newStateC;
 
@@ -642,7 +638,7 @@ int main()
             normalCube.rotate_x("CCW", selectCord.x);
             engine->play2D("rotateRubiksCube.mp3", false);
             debugTick = true;
-
+            engine->play2D("rotateRubiksCube.mp3", false);
         }
         oldStateR = newStateR;
 
@@ -651,7 +647,7 @@ int main()
             normalCube.rotate_x("CW", selectCord.x);
             engine->play2D("rotateRubiksCube.mp3", false);
             debugTick = true;
-
+            engine->play2D("rotateRubiksCube.mp3", false);
         }
         oldStateV = newStateV;
 
