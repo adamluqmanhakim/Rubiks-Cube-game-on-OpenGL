@@ -556,8 +556,6 @@ int main()
                 //engine->play2D("win.mp3", false);
         }
 
-
-
         // Changing Rubicks cube texture
         if (glfwGetKey(window, GLFW_KEY_1) == GLFW_PRESS) // increase camera movement speed 
         {
@@ -771,7 +769,8 @@ int main()
             TimeUpdate = 0;
         }
 
-        if (glfwGetKey(window, GLFW_KEY_9) == GLFW_PRESS) // play timer
+
+        if(glfwGetKey(window, GLFW_KEY_9) == GLFW_PRESS) // play timer
         {
             TimeUpdate = 1;
             glfwSetTime(0.0);
@@ -783,6 +782,7 @@ int main()
             pausedSeconds = 0.0;
             seconds = 0.0;
         }
+
 
         //vec3 lightDirection = normalize(lightFocus - lightPos);
 
