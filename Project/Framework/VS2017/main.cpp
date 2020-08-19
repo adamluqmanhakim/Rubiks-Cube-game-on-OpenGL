@@ -471,6 +471,7 @@ int main()
     double seconds = 0.0;
     double newseconds = 0.0;
     bool timeUp = false;
+    double pausedSeconds = 0.0;
 
     // Default texture is color pack
     vector<GLuint> texturePack = texturePackColors;
@@ -533,11 +534,13 @@ int main()
         glClear(GL_DEPTH_BUFFER_BIT);
 
         //Rendering Text
-        seconds = glfwGetTime();
-        time = 120.0 - seconds;
+        double realTime = glfwGetTime();
 
         if (TimeUpdate == 0) 
         {
+            seconds = pausedSeconds + realTime;
+            time = 120.0 - seconds;
+
             if (time > 0.0) {
                 timer = to_string(time);
             }
@@ -550,7 +553,10 @@ int main()
         }
         else if (TimeUpdate == 1)
         {
+            pausedSeconds = seconds;
+            time = 120.0 - seconds;
             timer = to_string(time);
+            glfwSetTime(0.0);
         }
 
         
