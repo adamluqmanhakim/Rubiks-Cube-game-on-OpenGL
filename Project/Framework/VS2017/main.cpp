@@ -427,10 +427,12 @@ int main()
     int skyboxChoose = 0;
 
     string timer = "";
-    string time = "";
-    int TimeUpdate = 0;
+    double time = 0.0;
+    int TimeUpdate = 1;
     double seconds = 0.0;
     double newseconds = 0.0;
+    bool timeUp = false;
+    double pausedSeconds = 0.0;
 
         ShadowShader.use();
     //creating all cube objects
@@ -490,22 +492,32 @@ int main()
         glClear(GL_COLOR_BUFFER_BIT);
         glClear(GL_DEPTH_BUFFER_BIT);
 
-            //Rendering Text
+        //Rendering Text
+        double realTime = glfwGetTime();
 
-            if (TimeUpdate == 0) 
-            {
-                seconds = glfwGetTime();
-                timer = to_string(120.0 - seconds);
+        if (TimeUpdate == 0)
+        {
+            seconds = pausedSeconds + realTime;
+            time = 120.0 - seconds;
+
+            if (time > 0.0) {
+                timer = to_string(time);
             }
-            else if (TimeUpdate == 1)
-            {
-                timer = to_string(120.0 - seconds);
+            else if (time <= 0.0 && timeUp == false) {
+                seconds = 0.0;
+                timer = "0.0";
+                engine->play2D("lost.mp3", false);
+                timeUp = true;
             }
-            else if (TimeUpdate == 2) 
-            {
-                newseconds = glfwGetTime();
-                timer = to_string(120.0 - newseconds);
-            }
+        }
+        else if (TimeUpdate == 1)
+        {
+            pausedSeconds = seconds;
+            time = 120.0 - seconds;
+            timer = to_string(time);
+            //if(completedcube == true)
+                //engine->play2D("win.mp3", false);
+        }
 
 
         //modules for controlling model and world behaviour =================================================================================================================
@@ -686,15 +698,19 @@ int main()
             TimeUpdate = 0;
         }
 
-        if(glfwGetKey(window, GLFW_KEY_9) == GLFW_PRESS)
+        if (glfwGetKey(window, GLFW_KEY_9) == GLFW_PRESS) // play timer
         {
             TimeUpdate = 1;
+            glfwSetTime(0.0);
         }
 
-            /*if (glfwGetKey(window, GLFW_KEY_8) == GLFW_PRESS)
-            {
-                TimeUpdate = 2;
-            }*/
+        if (glfwGetKey(window, GLFW_KEY_8) == GLFW_PRESS) // reset timer
+        {
+            glfwSetTime(0.0);
+            pausedSeconds = 0.0;
+            seconds = 0.0;
+        }
+
 
         //drawing everything ==================================================================================================
 
