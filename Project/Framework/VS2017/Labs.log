@@ -1,6 +1,4 @@
 ﻿C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\MSBuild\Microsoft\VC\v160\Microsoft.CppBuild.targets(467,5): warning MSB8028: The intermediate directory (C:\Users\Badreddine Loulidi\Desktop\Coding projects\Computer Graphics\Rubiks-Cube\Project\Framework\VS2017\/../Build/Debug/) contains files shared from another project (Project.vcxproj).  This can lead to incorrect clean and rebuild behavior.
-  Cube.cpp
-C:\Users\Badreddine Loulidi\Desktop\Coding projects\Computer Graphics\Rubiks-Cube\Project\Framework\VS2017\shader_compile.h(58,35): warning C4101: 'e': unreferenced local variable
   main.cpp
 C:\Users\Badreddine Loulidi\Desktop\Coding projects\Computer Graphics\Rubiks-Cube\Project\Framework\VS2017\shader_compile.h(58,35): warning C4101: 'e': unreferenced local variable
 C:\Users\Badreddine Loulidi\Desktop\Coding projects\Computer Graphics\Rubiks-Cube\Project\Framework\VS2017\shaderloader.h(26,10): warning C4477: 'printf' : format string '%s' requires an argument of type 'char *', but variadic argument 1 has type 'std::string'
@@ -57,27 +55,4 @@ C:\Users\Badreddine Loulidi\Desktop\Coding projects\Computer Graphics\Rubiks-Cub
 C:\Users\Badreddine Loulidi\Desktop\Coding projects\Computer Graphics\Rubiks-Cube\Project\Framework\VS2017\main.cpp(1123,19): warning C4101: 'nz': unreferenced local variable
 C:\Users\Badreddine Loulidi\Desktop\Coding projects\Computer Graphics\Rubiks-Cube\Project\Framework\VS2017\main.cpp(1124,11): warning C4101: 's': unreferenced local variable
 C:\Users\Badreddine Loulidi\Desktop\Coding projects\Computer Graphics\Rubiks-Cube\Project\Framework\VS2017\main.cpp(1124,14): warning C4101: 't': unreferenced local variable
-  Rubiks_Cube.cpp
-C:\Users\Badreddine Loulidi\Desktop\Coding projects\Computer Graphics\Rubiks-Cube\Project\Framework\VS2017\shader_compile.h(58,35): warning C4101: 'e': unreferenced local variable
-C:\Users\Badreddine Loulidi\Desktop\Coding projects\Computer Graphics\Rubiks-Cube\Project\Framework\VS2017\Rubiks_Cube.cpp(77,23): warning C4018: '<': signed/unsigned mismatch
-C:\Users\Badreddine Loulidi\Desktop\Coding projects\Computer Graphics\Rubiks-Cube\Project\Framework\VS2017\Rubiks_Cube.cpp(84,23): warning C4018: '<': signed/unsigned mismatch
-C:\Users\Badreddine Loulidi\Desktop\Coding projects\Computer Graphics\Rubiks-Cube\Project\Framework\VS2017\Rubiks_Cube.cpp(102,23): warning C4018: '<': signed/unsigned mismatch
-C:\Users\Badreddine Loulidi\Desktop\Coding projects\Computer Graphics\Rubiks-Cube\Project\Framework\VS2017\Rubiks_Cube.cpp(108,23): warning C4018: '<': signed/unsigned mismatch
-C:\Users\Badreddine Loulidi\Desktop\Coding projects\Computer Graphics\Rubiks-Cube\Project\Framework\VS2017\Rubiks_Cube.cpp(125,23): warning C4018: '<': signed/unsigned mismatch
-C:\Users\Badreddine Loulidi\Desktop\Coding projects\Computer Graphics\Rubiks-Cube\Project\Framework\VS2017\Rubiks_Cube.cpp(130,23): warning C4018: '<': signed/unsigned mismatch
-C:\Users\Badreddine Loulidi\Desktop\Coding projects\Computer Graphics\Rubiks-Cube\Project\Framework\VS2017\Rubiks_Cube.cpp(137,23): warning C4018: '<': signed/unsigned mismatch
-C:\Users\Badreddine Loulidi\Desktop\Coding projects\Computer Graphics\Rubiks-Cube\Project\Framework\VS2017\Rubiks_Cube.cpp(159,23): warning C4018: '<': signed/unsigned mismatch
-  Sphere.cpp
-C:\Users\Badreddine Loulidi\Desktop\Coding projects\Computer Graphics\Rubiks-Cube\Project\Framework\VS2017\shader_compile.h(58,35): warning C4101: 'e': unreferenced local variable
-C:\Users\Badreddine Loulidi\Desktop\Coding projects\Computer Graphics\Rubiks-Cube\Project\Framework\VS2017\Sphere.cpp(66,28): warning C4244: 'argument': conversion from 'float' to 'GLsizei', possible loss of data
-  stb_image.cpp
-  Generating Code...
-  LINK : C:\Users\Badreddine Loulidi\Desktop\Coding projects\Computer Graphics\Rubiks-Cube\Project\Framework\VS2017\\..\Bin\Labs-Debug.exe not found or not built by the last incremental link; performing full link
-LINK : warning LNK4098: defaultlib 'LIBCMT' conflicts with use of other libs; use /NODEFAULTLIB:library
-LINK : warning LNK4098: defaultlib 'MSVCRT' conflicts with use of other libs; use /NODEFAULTLIB:library
-LINK : warning LNK4286: symbol '___glewGetUniformLocation' defined in 'glew32s.lib(glew.obj)' is imported by 'Cube.obj'
-LINK : warning LNK4286: symbol '___glewGetUniformLocation' defined in 'glew32s.lib(glew.obj)' is imported by 'Sphere.obj'
-LINK : warning LNK4286: symbol '___glewUniformMatrix4fv' defined in 'glew32s.lib(glew.obj)' is imported by 'Cube.obj'
-LINK : warning LNK4286: symbol '___glewUniformMatrix4fv' defined in 'glew32s.lib(glew.obj)' is imported by 'Sphere.obj'
-glew32s.lib(glew.obj) : warning LNK4099: PDB 'vc120.pdb' was not found with 'glew32s.lib(glew.obj)' or at 'C:\Users\Badreddine Loulidi\Desktop\Coding projects\Computer Graphics\Rubiks-Cube\Project\Framework\Bin\vc120.pdb'; linking object as if no debug info
   Labs.vcxproj -> C:\Users\Badreddine Loulidi\Desktop\Coding projects\Computer Graphics\Rubiks-Cube\Project\Framework\VS2017\/../Bin/Labs-Debug.exe

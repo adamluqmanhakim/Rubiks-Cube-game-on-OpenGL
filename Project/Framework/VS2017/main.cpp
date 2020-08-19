@@ -66,7 +66,7 @@ vec3 defaultSize = vec3(1.0f, 6.5f, 1.0f);
 vec3 lightPos = vec3(0.0f, 1.0f, 30.0f);
 vec3 lightFocus(0, 0, -1); // the point in 3D space the light "looks" at
 
-    struct Character {
+struct Character {
     unsigned int TextureID; //Id handle of the glyph texture
     ivec2 Size;             //Size of glyph
     ivec2 Bearing;          //Offset from baseline to left/top of glyph
@@ -386,30 +386,30 @@ int main()
     GLuint whiteTextureID = loadTexture("../Assets/Textures/white.bmp");
     GLuint blueTextureID = loadTexture("../Assets/Textures/blue.bmp");
     GLuint orangeTextureID = loadTexture("../Assets/Textures/orange.bmp");
-    
+
     // Animal rubiks cube
-    GLuint zebraCubeID = loadTexture("../Assets/Textures/zebra.jpg");
+    GLuint zebraCubeID = loadTexture("../Assets/Textures/zebra.png");
     GLuint lionCubeID = loadTexture("../Assets/Textures/lion.jpg");
     GLuint giraffeCubeID = loadTexture("../Assets/Textures/giraffe.jpg");
     GLuint leopardCubeID = loadTexture("../Assets/Textures/leopard.jpg");
-    GLuint snakeCubeID = loadTexture("../Assets/Textures/snake.jpg");
-    GLuint whiteLeopardCubeID = loadTexture("../Assets/Textures/whiteLeopard.jpg");
+    GLuint snakeCubeID = loadTexture("../Assets/Textures/snake.png");
+    GLuint whiteLeopardCubeID = loadTexture("../Assets/Textures/whiteLeopard.png");
 
     // Movies rubiks cube
     GLuint backIntoTheFutureCubeID = loadTexture("../Assets/Textures/backIntoTheFuture.jpg");
     GLuint elfCubeID = loadTexture("../Assets/Textures/elf.jpg");
     GLuint harryPotterCubeID = loadTexture("../Assets/Textures/harryPotter.jpg");
     GLuint homeAloneCubeID = loadTexture("../Assets/Textures/homeAlone.jpg");
-    GLuint spaceJamCubeID = loadTexture("../Assets/Textures/spaceJam.jpg");
+    GLuint spaceJamCubeID = loadTexture("../Assets/Textures/spaceJam.png");
     GLuint lordOfTheRingCubeID = loadTexture("../Assets/Textures/lordOfTheRing.jpg");
 
     // Gaming characters rubiks cube
-    GLuint marioCubeID = loadTexture("../Assets/Textures/mario.jpg");
-    GLuint nessCubeID = loadTexture("../Assets/Textures/ness.jpg");
-    GLuint pikachuCubeID = loadTexture("../Assets/Textures/pikachu.jpg");
-    GLuint sonicCubeID = loadTexture("../Assets/Textures/sonic.jpeg");
+    GLuint marioCubeID = loadTexture("../Assets/Textures/mario.png");
+    GLuint nessCubeID = loadTexture("../Assets/Textures/ness.png");
+    GLuint pikachuCubeID = loadTexture("../Assets/Textures/pikachu.png");
+    GLuint sonicCubeID = loadTexture("../Assets/Textures/sonic.png");
     GLuint pacmanCubeID = loadTexture("../Assets/Textures/pacman.png");
-    GLuint zeldaCubeID = loadTexture("../Assets/Textures/zelda.jpg");
+    GLuint zeldaCubeID = loadTexture("../Assets/Textures/zelda.png");
 
     // Skybox texture
     GLuint skyboxTextureID = loadTexture("../Assets/Textures/skybox.jpg");
@@ -502,7 +502,7 @@ int main()
     // Entering Game Loop
     while (!glfwWindowShouldClose(window))
     {
-        bool debugTick = false; 
+        bool debugTick = false;
 
         NotAffectedByLightingShader.use();
         NotAffectedByLightingShader.setInt("currentAxis", 0);
@@ -532,7 +532,7 @@ int main()
         //Rendering Text
         double realTime = glfwGetTime();
 
-        if (TimeUpdate == 0) 
+        if (TimeUpdate == 0)
         {
             seconds = pausedSeconds + realTime;
             time = 120.0 - seconds;
@@ -555,8 +555,6 @@ int main()
             //if(completedcube == true)
                 //engine->play2D("win.mp3", false);
         }
-
-        
 
         // Changing Rubicks cube texture
         if (glfwGetKey(window, GLFW_KEY_1) == GLFW_PRESS) // increase camera movement speed 
@@ -762,14 +760,15 @@ int main()
 
         //drawing everything ==================================================================================================
 
-        
+
         //vec3 lightDirection = normalize(lightFocus - lightPos);
         vec3 lightDirection = cameraLookAt;
- 
+
         if (glfwGetKey(window, GLFW_KEY_0) == GLFW_PRESS) // pause timer
         {
             TimeUpdate = 0;
         }
+
 
         if(glfwGetKey(window, GLFW_KEY_9) == GLFW_PRESS) // play timer
         {
@@ -777,12 +776,13 @@ int main()
             glfwSetTime(0.0);
         }
 
-        if(glfwGetKey(window, GLFW_KEY_8) == GLFW_PRESS) // reset timer
+        if (glfwGetKey(window, GLFW_KEY_8) == GLFW_PRESS) // reset timer
         {
             glfwSetTime(0.0);
             pausedSeconds = 0.0;
             seconds = 0.0;
-		}
+        }
+
 
         //vec3 lightDirection = normalize(lightFocus - lightPos);
 
@@ -1013,7 +1013,7 @@ int main()
         NotAffectedByLightingShader.setMat4("viewMatrix", viewMatrix);
 
         lightPos = cameraPosition;
-        
+
 
     }
 
