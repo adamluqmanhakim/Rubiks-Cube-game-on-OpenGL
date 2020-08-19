@@ -767,13 +767,13 @@ int main()
         if (glfwGetKey(window, GLFW_KEY_0) == GLFW_PRESS) // pause timer
         {
             TimeUpdate = 0;
+            glfwSetTime(0.0);
         }
 
 
         if(glfwGetKey(window, GLFW_KEY_9) == GLFW_PRESS) // play timer
         {
             TimeUpdate = 1;
-            glfwSetTime(0.0);
         }
 
         if (glfwGetKey(window, GLFW_KEY_8) == GLFW_PRESS) // reset timer
