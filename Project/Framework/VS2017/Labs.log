@@ -5,32 +5,32 @@ C:\Users\Badreddine Loulidi\Desktop\Coding projects\Computer Graphics\Rubiks-Cub
 C:\Users\Badreddine Loulidi\Desktop\Coding projects\Computer Graphics\Rubiks-Cube\Project\Framework\VS2017\main.cpp(181,37): warning C4838: conversion from 'FT_Pos' to 'unsigned int' requires a narrowing conversion
 C:\Users\Badreddine Loulidi\Desktop\Coding projects\Computer Graphics\Rubiks-Cube\Project\Framework\VS2017\main.cpp(438,25): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
 C:\Users\Badreddine Loulidi\Desktop\Coding projects\Computer Graphics\Rubiks-Cube\Project\Framework\VS2017\main.cpp(529,18): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-C:\Users\Badreddine Loulidi\Desktop\Coding projects\Computer Graphics\Rubiks-Cube\Project\Framework\VS2017\main.cpp(608,50): warning C4244: 'argument': conversion from 'T' to 'int', possible loss of data
+C:\Users\Badreddine Loulidi\Desktop\Coding projects\Computer Graphics\Rubiks-Cube\Project\Framework\VS2017\main.cpp(607,50): warning C4244: 'argument': conversion from 'T' to 'int', possible loss of data
           with
           [
               T=float
           ]
-C:\Users\Badreddine Loulidi\Desktop\Coding projects\Computer Graphics\Rubiks-Cube\Project\Framework\VS2017\main.cpp(616,49): warning C4244: 'argument': conversion from 'T' to 'int', possible loss of data
+C:\Users\Badreddine Loulidi\Desktop\Coding projects\Computer Graphics\Rubiks-Cube\Project\Framework\VS2017\main.cpp(615,49): warning C4244: 'argument': conversion from 'T' to 'int', possible loss of data
           with
           [
               T=float
           ]
-C:\Users\Badreddine Loulidi\Desktop\Coding projects\Computer Graphics\Rubiks-Cube\Project\Framework\VS2017\main.cpp(625,50): warning C4244: 'argument': conversion from 'T' to 'int', possible loss of data
+C:\Users\Badreddine Loulidi\Desktop\Coding projects\Computer Graphics\Rubiks-Cube\Project\Framework\VS2017\main.cpp(624,50): warning C4244: 'argument': conversion from 'T' to 'int', possible loss of data
           with
           [
               T=float
           ]
-C:\Users\Badreddine Loulidi\Desktop\Coding projects\Computer Graphics\Rubiks-Cube\Project\Framework\VS2017\main.cpp(634,49): warning C4244: 'argument': conversion from 'T' to 'int', possible loss of data
+C:\Users\Badreddine Loulidi\Desktop\Coding projects\Computer Graphics\Rubiks-Cube\Project\Framework\VS2017\main.cpp(633,49): warning C4244: 'argument': conversion from 'T' to 'int', possible loss of data
           with
           [
               T=float
           ]
-C:\Users\Badreddine Loulidi\Desktop\Coding projects\Computer Graphics\Rubiks-Cube\Project\Framework\VS2017\main.cpp(643,50): warning C4244: 'argument': conversion from 'T' to 'int', possible loss of data
+C:\Users\Badreddine Loulidi\Desktop\Coding projects\Computer Graphics\Rubiks-Cube\Project\Framework\VS2017\main.cpp(642,50): warning C4244: 'argument': conversion from 'T' to 'int', possible loss of data
           with
           [
               T=float
           ]
-C:\Users\Badreddine Loulidi\Desktop\Coding projects\Computer Graphics\Rubiks-Cube\Project\Framework\VS2017\main.cpp(652,49): warning C4244: 'argument': conversion from 'T' to 'int', possible loss of data
+C:\Users\Badreddine Loulidi\Desktop\Coding projects\Computer Graphics\Rubiks-Cube\Project\Framework\VS2017\main.cpp(651,49): warning C4244: 'argument': conversion from 'T' to 'int', possible loss of data
           with
           [
               T=float

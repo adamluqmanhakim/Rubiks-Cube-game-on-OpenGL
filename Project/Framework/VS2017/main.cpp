@@ -556,7 +556,6 @@ int main()
             pausedSeconds = seconds;
             time = 120.0 - seconds;
             timer = to_string(time);
-            glfwSetTime(0.0);
             //if(completedcube == true)
                 //engine->play2D("win.mp3", false);
         }
@@ -779,6 +778,7 @@ int main()
         if(glfwGetKey(window, GLFW_KEY_9) == GLFW_PRESS) // play timer
         {
             TimeUpdate = 1;
+            glfwSetTime(0.0);
         }
 
         if(glfwGetKey(window, GLFW_KEY_8) == GLFW_PRESS) // reset timer
