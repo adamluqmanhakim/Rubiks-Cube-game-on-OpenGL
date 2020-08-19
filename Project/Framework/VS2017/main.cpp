@@ -467,7 +467,7 @@ int main()
 
     string timer = "";
     double time = 0.0;
-    int TimeUpdate = 0;
+    int TimeUpdate = 1;
     double seconds = 0.0;
     double newseconds = 0.0;
     bool timeUp = false;
