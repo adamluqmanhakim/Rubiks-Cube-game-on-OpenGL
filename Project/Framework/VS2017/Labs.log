@@ -2,57 +2,57 @@
   main.cpp
 C:\Users\Badreddine Loulidi\Desktop\Coding projects\Computer Graphics\Rubiks-Cube\Project\Framework\VS2017\shader_compile.h(58,35): warning C4101: 'e': unreferenced local variable
 C:\Users\Badreddine Loulidi\Desktop\Coding projects\Computer Graphics\Rubiks-Cube\Project\Framework\VS2017\shaderloader.h(26,10): warning C4477: 'printf' : format string '%s' requires an argument of type 'char *', but variadic argument 1 has type 'std::string'
-C:\Users\Badreddine Loulidi\Desktop\Coding projects\Computer Graphics\Rubiks-Cube\Project\Framework\VS2017\main.cpp(180,37): warning C4838: conversion from 'FT_Pos' to 'unsigned int' requires a narrowing conversion
-C:\Users\Badreddine Loulidi\Desktop\Coding projects\Computer Graphics\Rubiks-Cube\Project\Framework\VS2017\main.cpp(404,25): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-C:\Users\Badreddine Loulidi\Desktop\Coding projects\Computer Graphics\Rubiks-Cube\Project\Framework\VS2017\main.cpp(488,18): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-C:\Users\Badreddine Loulidi\Desktop\Coding projects\Computer Graphics\Rubiks-Cube\Project\Framework\VS2017\main.cpp(534,50): warning C4244: 'argument': conversion from 'T' to 'int', possible loss of data
+C:\Users\Badreddine Loulidi\Desktop\Coding projects\Computer Graphics\Rubiks-Cube\Project\Framework\VS2017\main.cpp(181,37): warning C4838: conversion from 'FT_Pos' to 'unsigned int' requires a narrowing conversion
+C:\Users\Badreddine Loulidi\Desktop\Coding projects\Computer Graphics\Rubiks-Cube\Project\Framework\VS2017\main.cpp(438,25): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+C:\Users\Badreddine Loulidi\Desktop\Coding projects\Computer Graphics\Rubiks-Cube\Project\Framework\VS2017\main.cpp(525,18): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+C:\Users\Badreddine Loulidi\Desktop\Coding projects\Computer Graphics\Rubiks-Cube\Project\Framework\VS2017\main.cpp(603,50): warning C4244: 'argument': conversion from 'T' to 'int', possible loss of data
           with
           [
               T=float
           ]
-C:\Users\Badreddine Loulidi\Desktop\Coding projects\Computer Graphics\Rubiks-Cube\Project\Framework\VS2017\main.cpp(542,49): warning C4244: 'argument': conversion from 'T' to 'int', possible loss of data
+C:\Users\Badreddine Loulidi\Desktop\Coding projects\Computer Graphics\Rubiks-Cube\Project\Framework\VS2017\main.cpp(611,49): warning C4244: 'argument': conversion from 'T' to 'int', possible loss of data
           with
           [
               T=float
           ]
-C:\Users\Badreddine Loulidi\Desktop\Coding projects\Computer Graphics\Rubiks-Cube\Project\Framework\VS2017\main.cpp(550,50): warning C4244: 'argument': conversion from 'T' to 'int', possible loss of data
+C:\Users\Badreddine Loulidi\Desktop\Coding projects\Computer Graphics\Rubiks-Cube\Project\Framework\VS2017\main.cpp(620,50): warning C4244: 'argument': conversion from 'T' to 'int', possible loss of data
           with
           [
               T=float
           ]
-C:\Users\Badreddine Loulidi\Desktop\Coding projects\Computer Graphics\Rubiks-Cube\Project\Framework\VS2017\main.cpp(558,49): warning C4244: 'argument': conversion from 'T' to 'int', possible loss of data
+C:\Users\Badreddine Loulidi\Desktop\Coding projects\Computer Graphics\Rubiks-Cube\Project\Framework\VS2017\main.cpp(629,49): warning C4244: 'argument': conversion from 'T' to 'int', possible loss of data
           with
           [
               T=float
           ]
-C:\Users\Badreddine Loulidi\Desktop\Coding projects\Computer Graphics\Rubiks-Cube\Project\Framework\VS2017\main.cpp(566,50): warning C4244: 'argument': conversion from 'T' to 'int', possible loss of data
+C:\Users\Badreddine Loulidi\Desktop\Coding projects\Computer Graphics\Rubiks-Cube\Project\Framework\VS2017\main.cpp(638,50): warning C4244: 'argument': conversion from 'T' to 'int', possible loss of data
           with
           [
               T=float
           ]
-C:\Users\Badreddine Loulidi\Desktop\Coding projects\Computer Graphics\Rubiks-Cube\Project\Framework\VS2017\main.cpp(574,49): warning C4244: 'argument': conversion from 'T' to 'int', possible loss of data
+C:\Users\Badreddine Loulidi\Desktop\Coding projects\Computer Graphics\Rubiks-Cube\Project\Framework\VS2017\main.cpp(647,49): warning C4244: 'argument': conversion from 'T' to 'int', possible loss of data
           with
           [
               T=float
           ]
-C:\Users\Badreddine Loulidi\Desktop\Coding projects\Computer Graphics\Rubiks-Cube\Project\Framework\VS2017\main.cpp(849,28): warning C4244: '+=': conversion from 'double' to 'float', possible loss of data
-C:\Users\Badreddine Loulidi\Desktop\Coding projects\Computer Graphics\Rubiks-Cube\Project\Framework\VS2017\main.cpp(854,27): warning C4305: '=': truncation from 'double' to 'float'
-C:\Users\Badreddine Loulidi\Desktop\Coding projects\Computer Graphics\Rubiks-Cube\Project\Framework\VS2017\main.cpp(858,40): warning C4244: '+=': conversion from 'double' to 'float', possible loss of data
-C:\Users\Badreddine Loulidi\Desktop\Coding projects\Computer Graphics\Rubiks-Cube\Project\Framework\VS2017\main.cpp(864,64): warning C4244: '-=': conversion from 'double' to 'float', possible loss of data
-C:\Users\Badreddine Loulidi\Desktop\Coding projects\Computer Graphics\Rubiks-Cube\Project\Framework\VS2017\main.cpp(865,62): warning C4244: '-=': conversion from 'double' to 'float', possible loss of data
-C:\Users\Badreddine Loulidi\Desktop\Coding projects\Computer Graphics\Rubiks-Cube\Project\Framework\VS2017\main.cpp(416,16): warning C4101: 'height': unreferenced local variable
-C:\Users\Badreddine Loulidi\Desktop\Coding projects\Computer Graphics\Rubiks-Cube\Project\Framework\VS2017\main.cpp(416,9): warning C4101: 'width': unreferenced local variable
-C:\Users\Badreddine Loulidi\Desktop\Coding projects\Computer Graphics\Rubiks-Cube\Project\Framework\VS2017\main.cpp(1033,26): warning C4244: 'return': conversion from 'int' to 'float', possible loss of data
-C:\Users\Badreddine Loulidi\Desktop\Coding projects\Computer Graphics\Rubiks-Cube\Project\Framework\VS2017\main.cpp(1045,23): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
-C:\Users\Badreddine Loulidi\Desktop\Coding projects\Computer Graphics\Rubiks-Cube\Project\Framework\VS2017\main.cpp(1046,22): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
-C:\Users\Badreddine Loulidi\Desktop\Coding projects\Computer Graphics\Rubiks-Cube\Project\Framework\VS2017\main.cpp(1054,22): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-C:\Users\Badreddine Loulidi\Desktop\Coding projects\Computer Graphics\Rubiks-Cube\Project\Framework\VS2017\main.cpp(1055,21): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-C:\Users\Badreddine Loulidi\Desktop\Coding projects\Computer Graphics\Rubiks-Cube\Project\Framework\VS2017\main.cpp(1060,31): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-C:\Users\Badreddine Loulidi\Desktop\Coding projects\Computer Graphics\Rubiks-Cube\Project\Framework\VS2017\main.cpp(1080,16): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
-C:\Users\Badreddine Loulidi\Desktop\Coding projects\Computer Graphics\Rubiks-Cube\Project\Framework\VS2017\main.cpp(1081,31): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
-C:\Users\Badreddine Loulidi\Desktop\Coding projects\Computer Graphics\Rubiks-Cube\Project\Framework\VS2017\main.cpp(1051,11): warning C4101: 'nx': unreferenced local variable
-C:\Users\Badreddine Loulidi\Desktop\Coding projects\Computer Graphics\Rubiks-Cube\Project\Framework\VS2017\main.cpp(1051,15): warning C4101: 'ny': unreferenced local variable
-C:\Users\Badreddine Loulidi\Desktop\Coding projects\Computer Graphics\Rubiks-Cube\Project\Framework\VS2017\main.cpp(1051,19): warning C4101: 'nz': unreferenced local variable
-C:\Users\Badreddine Loulidi\Desktop\Coding projects\Computer Graphics\Rubiks-Cube\Project\Framework\VS2017\main.cpp(1052,11): warning C4101: 's': unreferenced local variable
-C:\Users\Badreddine Loulidi\Desktop\Coding projects\Computer Graphics\Rubiks-Cube\Project\Framework\VS2017\main.cpp(1052,14): warning C4101: 't': unreferenced local variable
+C:\Users\Badreddine Loulidi\Desktop\Coding projects\Computer Graphics\Rubiks-Cube\Project\Framework\VS2017\main.cpp(921,28): warning C4244: '+=': conversion from 'double' to 'float', possible loss of data
+C:\Users\Badreddine Loulidi\Desktop\Coding projects\Computer Graphics\Rubiks-Cube\Project\Framework\VS2017\main.cpp(926,27): warning C4305: '=': truncation from 'double' to 'float'
+C:\Users\Badreddine Loulidi\Desktop\Coding projects\Computer Graphics\Rubiks-Cube\Project\Framework\VS2017\main.cpp(930,40): warning C4244: '+=': conversion from 'double' to 'float', possible loss of data
+C:\Users\Badreddine Loulidi\Desktop\Coding projects\Computer Graphics\Rubiks-Cube\Project\Framework\VS2017\main.cpp(936,64): warning C4244: '-=': conversion from 'double' to 'float', possible loss of data
+C:\Users\Badreddine Loulidi\Desktop\Coding projects\Computer Graphics\Rubiks-Cube\Project\Framework\VS2017\main.cpp(937,62): warning C4244: '-=': conversion from 'double' to 'float', possible loss of data
+C:\Users\Badreddine Loulidi\Desktop\Coding projects\Computer Graphics\Rubiks-Cube\Project\Framework\VS2017\main.cpp(450,16): warning C4101: 'height': unreferenced local variable
+C:\Users\Badreddine Loulidi\Desktop\Coding projects\Computer Graphics\Rubiks-Cube\Project\Framework\VS2017\main.cpp(450,9): warning C4101: 'width': unreferenced local variable
+C:\Users\Badreddine Loulidi\Desktop\Coding projects\Computer Graphics\Rubiks-Cube\Project\Framework\VS2017\main.cpp(1105,26): warning C4244: 'return': conversion from 'int' to 'float', possible loss of data
+C:\Users\Badreddine Loulidi\Desktop\Coding projects\Computer Graphics\Rubiks-Cube\Project\Framework\VS2017\main.cpp(1117,23): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
+C:\Users\Badreddine Loulidi\Desktop\Coding projects\Computer Graphics\Rubiks-Cube\Project\Framework\VS2017\main.cpp(1118,22): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
+C:\Users\Badreddine Loulidi\Desktop\Coding projects\Computer Graphics\Rubiks-Cube\Project\Framework\VS2017\main.cpp(1126,22): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+C:\Users\Badreddine Loulidi\Desktop\Coding projects\Computer Graphics\Rubiks-Cube\Project\Framework\VS2017\main.cpp(1127,21): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+C:\Users\Badreddine Loulidi\Desktop\Coding projects\Computer Graphics\Rubiks-Cube\Project\Framework\VS2017\main.cpp(1132,31): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\Users\Badreddine Loulidi\Desktop\Coding projects\Computer Graphics\Rubiks-Cube\Project\Framework\VS2017\main.cpp(1152,16): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+C:\Users\Badreddine Loulidi\Desktop\Coding projects\Computer Graphics\Rubiks-Cube\Project\Framework\VS2017\main.cpp(1153,31): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+C:\Users\Badreddine Loulidi\Desktop\Coding projects\Computer Graphics\Rubiks-Cube\Project\Framework\VS2017\main.cpp(1123,11): warning C4101: 'nx': unreferenced local variable
+C:\Users\Badreddine Loulidi\Desktop\Coding projects\Computer Graphics\Rubiks-Cube\Project\Framework\VS2017\main.cpp(1123,15): warning C4101: 'ny': unreferenced local variable
+C:\Users\Badreddine Loulidi\Desktop\Coding projects\Computer Graphics\Rubiks-Cube\Project\Framework\VS2017\main.cpp(1123,19): warning C4101: 'nz': unreferenced local variable
+C:\Users\Badreddine Loulidi\Desktop\Coding projects\Computer Graphics\Rubiks-Cube\Project\Framework\VS2017\main.cpp(1124,11): warning C4101: 's': unreferenced local variable
+C:\Users\Badreddine Loulidi\Desktop\Coding projects\Computer Graphics\Rubiks-Cube\Project\Framework\VS2017\main.cpp(1124,14): warning C4101: 't': unreferenced local variable
   Labs.vcxproj -> C:\Users\Badreddine Loulidi\Desktop\Coding projects\Computer Graphics\Rubiks-Cube\Project\Framework\VS2017\/../Bin/Labs-Debug.exe
